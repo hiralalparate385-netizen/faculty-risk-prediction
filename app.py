@@ -9,6 +9,7 @@ from pathlib import Path
 from streamlit_option_menu import option_menu
 import json
 from datetime import datetime
+from postmortem_analysis import PostMortemAnalyzer, format_metrics_table
 
 # ======================== PAGE CONFIG ========================
 st.set_page_config(
@@ -564,6 +565,55 @@ st.markdown("""
         border-radius: 8px;
     }
     
+    /* ===== POST-MORTEM ANALYSIS STYLES ===== */
+    .postmortem-card {
+        background: linear-gradient(135deg, rgba(78, 205, 196, 0.1) 0%, rgba(78, 205, 196, 0.05) 100%);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(78, 205, 196, 0.2);
+        border-radius: 12px;
+        padding: 24px;
+        margin: 16px 0;
+        box-shadow: 0 4px 15px rgba(78, 205, 196, 0.1);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .postmortem-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 16px 40px rgba(78, 205, 196, 0.2);
+        border: 1px solid rgba(78, 205, 196, 0.4);
+    }
+    
+    .improved-metric {
+        color: #4ECDC4;
+        font-weight: 600;
+    }
+    
+    .degraded-metric {
+        color: #FF6B6B;
+        font-weight: 600;
+    }
+    
+    .stable-metric {
+        color: #FFD93D;
+        font-weight: 600;
+    }
+    
+    .postmortem-insight {
+        background: linear-gradient(135deg, rgba(78, 205, 196, 0.15) 0%, rgba(78, 205, 196, 0.05) 100%);
+        border-left: 4px solid #4ECDC4;
+        padding: 16px;
+        border-radius: 8px;
+        margin: 12px 0;
+        color: #E8E8E8;
+        transition: all 0.25s ease;
+    }
+    
+    .postmortem-insight:hover {
+        transform: translateX(4px);
+        border-left: 4px solid #FFD93D;
+        box-shadow: 0 8px 24px rgba(78, 205, 196, 0.2);
+    }
+    
     </style>
 """, unsafe_allow_html=True)
 
@@ -620,6 +670,9 @@ def load_all_models_metadata():
 df = load_data()
 models_metadata = load_all_models_metadata()
 
+# Initialize Post-Mortem Analyzer
+postmortem_analyzer = PostMortemAnalyzer(MODEL_DIR, BASE_DIR / "data")
+
 # Default model
 default_model, default_scaler = load_model('logistic')
 
@@ -636,8 +689,8 @@ with st.sidebar:
     
     selected = option_menu(
         menu_title=None,
-        options=["🏠 Dashboard", "📊 Analytics", "🔮 Prediction", "📈 Model Comparison", "ℹ️ About"],
-        icons=["house", "bar-chart", "robot", "graph-up", "info-circle"],
+        options=["🏠 Dashboard", "📊 Analytics", "🔮 Prediction", "📈 Model Comparison", "📋 Post-Mortem", "ℹ️ About"],
+        icons=["house", "bar-chart", "robot", "graph-up", "file-text", "info-circle"],
         menu_icon="cast",
         default_index=0,
         styles={
@@ -1752,6 +1805,293 @@ elif selected == "📈 Model Comparison":
             st.info("No model metadata found. Please train models first.")
     else:
         st.info("No models available for comparison.")
+
+# ======================== POST-MORTEM ANALYSIS ========================
+elif selected == "📋 Post-Mortem":
+    st.markdown("<div class='section-title'>📋 Post-Mortem Analysis: Model Performance Evolution</div>", unsafe_allow_html=True)
+    
+    st.markdown("""
+        <div class='insight-box' style='border-left: 4px solid #4ECDC4;'>
+            <strong>📊 What is This?</strong><br>
+            This section analyzes how your models have evolved since initial training. It compares initial metrics 
+            with current performance, explains why changes occurred (e.g., data growth, distribution shifts), and 
+            provides insights to improve model robustness and reliability.
+        </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # Get post-mortem analysis
+    baseline, comparison, insights = postmortem_analyzer.get_postmortem_summary(df)
+    
+    # Overall Assessment Section
+    st.markdown("<div class='section-title' style='font-size: 1.25em;'>🎯 Overall Assessment</div>", unsafe_allow_html=True)
+    
+    col1, col2 = st.columns([2, 1])
+    
+    with col1:
+        assessment = insights.get("overall_assessment", "No assessment available")
+        assessment_color = "#4ECDC4" if "improved" in assessment else "#FFD93D" if "mixed" in assessment else "#FF6B6B"
+        
+        st.markdown(f"""
+            <div class='insight-box' style='border-left: 4px solid {assessment_color}; font-size: 1.1em;'>
+                {assessment}
+            </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        dq = insights.get("data_quality", {})
+        st.markdown(f"""
+            <div class='metric-card'>
+                <div style='font-size: 0.85em; color: #A0A0A0; margin-bottom: 8px;'>Data Growth</div>
+                <div style='font-size: 1.3em; font-weight: 800; color: #4ECDC4;'>{dq.get("data_growth", "N/A")}</div>
+                <div style='font-size: 0.75em; color: #A0A0A0; margin-top: 8px;'>{dq.get("class_balance", "N/A")}</div>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # Metrics Comparison Table
+    st.markdown("<div class='section-title' style='font-size: 1.15em;'>📊 Metrics Comparison (Initial vs Current)</div>", unsafe_allow_html=True)
+    
+    comparison_df = format_metrics_table(comparison)
+    
+    # Color code the status column
+    def style_status(val):
+        if val == "IMPROVED":
+            return f'background-color: rgba(78, 205, 196, 0.3); color: #4ECDC4; font-weight: bold;'
+        elif val == "DEGRADED":
+            return f'background-color: rgba(255, 107, 107, 0.3); color: #FF6B6B; font-weight: bold;'
+        else:
+            return f'background-color: rgba(255, 255, 255, 0.1); color: #E8E8E8;'
+    
+    styled_df = comparison_df.style.applymap(
+        lambda val: style_status(val) if comparison_df.columns.get_loc(comparison_df.columns[-1]) and isinstance(val, str) else ""
+    )
+    
+    st.dataframe(comparison_df, use_container_width=True)
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # Detailed Metric Visualizations
+    st.markdown("<div class='section-title' style='font-size: 1.15em;'>📈 Metric Trends by Model</div>", unsafe_allow_html=True)
+    
+    # Prepare data for visualization
+    models_list = list(comparison.keys())
+    metrics_list = ["accuracy", "precision", "recall", "f1_score"]
+    
+    # Create comparison chart
+    chart_data = []
+    for model in models_list:
+        for metric in metrics_list:
+            baseline_val = comparison[model][metric]["baseline"]
+            current_val = comparison[model][metric]["current"]
+            change = comparison[model][metric]["change"]
+            
+            chart_data.append({
+                "Model": model.replace("_", " ").title(),
+                "Metric": metric.upper(),
+                "Baseline": baseline_val,
+                "Current": current_val,
+                "Change": change
+            })
+    
+    chart_df = pd.DataFrame(chart_data)
+    
+    tab1, tab2, tab3 = st.tabs(["📊 Model Comparison", "📈 Change Analysis", "🎯 Individual Models"])
+    
+    with tab1:
+        # Grouped bar chart comparing initial vs current
+        fig_comparison = go.Figure()
+        
+        for metric in metrics_list:
+            baseline_vals = [comparison[m][metric]["baseline"] for m in models_list]
+            fig_comparison.add_trace(go.Bar(
+                name=f"{metric.upper()} (Baseline)",
+                x=[m.replace("_", " ").title() for m in models_list],
+                y=baseline_vals,
+                marker_color="rgba(255, 107, 107, 0.6)"
+            ))
+            
+            current_vals = [comparison[m][metric]["current"] for m in models_list]
+            fig_comparison.add_trace(go.Bar(
+                name=f"{metric.upper()} (Current)",
+                x=[m.replace("_", " ").title() for m in models_list],
+                y=current_vals,
+                marker_color="rgba(78, 205, 196, 0.6)"
+            ))
+        
+        fig_comparison.update_layout(
+            barmode='group',
+            title="Model Metrics: Baseline vs Current",
+            xaxis_title="Model",
+            yaxis_title="Score (0-1)",
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='#E8E8E8', family='Inter'),
+            height=500,
+            hovermode='x unified',
+            legend=dict(orientation="v", yanchor="top", y=1, xanchor="left", x=1)
+        )
+        
+        st.plotly_chart(fig_comparison, use_container_width=True, config={'displayModeBar': False})
+    
+    with tab2:
+        # Change analysis - showing improvements vs degradations
+        fig_change = go.Figure()
+        
+        for metric in metrics_list:
+            changes = [comparison[m][metric]["pct_change"] for m in models_list]
+            colors = ["#4ECDC4" if c > 0 else "#FF6B6B" for c in changes]
+            
+            fig_change.add_trace(go.Bar(
+                name=metric.upper(),
+                x=[m.replace("_", " ").title() for m in models_list],
+                y=changes,
+                marker_color=colors,
+                text=[f"{c:+.2f}%" for c in changes],
+                textposition='outside'
+            ))
+        
+        fig_change.update_layout(
+            barmode='group',
+            title="Metric Change Percentage (Baseline → Current)",
+            xaxis_title="Model",
+            yaxis_title="Change %",
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='#E8E8E8', family='Inter'),
+            height=500,
+            hovermode='x unified',
+            shapes=[dict(type="line", x0=-1, y0=0, x1=len(models_list), y1=0, line=dict(color="rgba(255, 255, 255, 0.3)", width=2))]
+        )
+        
+        st.plotly_chart(fig_change, use_container_width=True, config={'displayModeBar': False})
+    
+    with tab3:
+        # Individual model performance radar charts
+        selected_model_viz = st.selectbox("Select Model to Visualize", models_list, format_func=lambda x: x.replace("_", " ").title())
+        
+        categories = ["Accuracy", "Precision", "Recall", "F1-Score"]
+        baseline_values = [
+            comparison[selected_model_viz]["accuracy"]["baseline"],
+            comparison[selected_model_viz]["precision"]["baseline"],
+            comparison[selected_model_viz]["recall"]["baseline"],
+            comparison[selected_model_viz]["f1_score"]["baseline"]
+        ]
+        current_values = [
+            comparison[selected_model_viz]["accuracy"]["current"],
+            comparison[selected_model_viz]["precision"]["current"],
+            comparison[selected_model_viz]["recall"]["current"],
+            comparison[selected_model_viz]["f1_score"]["current"]
+        ]
+        
+        fig_radar = go.Figure()
+        
+        fig_radar.add_trace(go.Scatterpolar(
+            r=baseline_values,
+            theta=categories,
+            fill='toself',
+            name='Baseline',
+            line_color='rgba(255, 107, 107, 0.8)',
+            fillcolor='rgba(255, 107, 107, 0.3)'
+        ))
+        
+        fig_radar.add_trace(go.Scatterpolar(
+            r=current_values,
+            theta=categories,
+            fill='toself',
+            name='Current',
+            line_color='rgba(78, 205, 196, 0.8)',
+            fillcolor='rgba(78, 205, 196, 0.3)'
+        ))
+        
+        fig_radar.update_layout(
+            polar=dict(radialaxis=dict(visible=True, range=[0, 1], color="#E8E8E8")),
+            title=f"{selected_model_viz.replace('_', ' ').title()} - Performance Radar",
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='#E8E8E8', family='Inter'),
+            height=500,
+            showlegend=True
+        )
+        
+        st.plotly_chart(fig_radar, use_container_width=True, config={'displayModeBar': False})
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # Key Factors Section
+    st.markdown("<div class='section-title' style='font-size: 1.15em;'>🔍 Key Factors Explaining Changes</div>", unsafe_allow_html=True)
+    
+    factors = insights.get("key_factors", [])
+    if factors:
+        for i, factor in enumerate(factors):
+            st.markdown(f"""
+                <div class='insight-box' style='animation-delay: {i * 0.08}s;'>
+                    {factor}
+                </div>
+            """, unsafe_allow_html=True)
+    else:
+        st.info("No significant factors identified")
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # Model-Specific Insights
+    st.markdown("<div class='section-title' style='font-size: 1.15em;'>📌 Model-Specific Insights</div>", unsafe_allow_html=True)
+    
+    model_tabs = st.tabs([m.replace("_", " ").title() for m in models_list])
+    
+    for idx, model in enumerate(models_list):
+        with model_tabs[idx]:
+            model_insights = insights.get("model_specific", {}).get(model, [])
+            
+            if model_insights:
+                for j, insight in enumerate(model_insights):
+                    st.markdown(f"""
+                        <div class='insight-box' style='animation-delay: {j * 0.08}s;'>
+                            {insight}
+                        </div>
+                    """, unsafe_allow_html=True)
+            else:
+                st.info("No specific insights for this model")
+            
+            # Show metrics for this model
+            st.markdown("<br><div style='font-size: 0.9em; font-weight: 600; color: #A0A0A0;'>📊 Metric Details</div>", unsafe_allow_html=True)
+            
+            metrics_cols = st.columns(4)
+            for m_idx, metric in enumerate(metrics_list):
+                with metrics_cols[m_idx]:
+                    data = comparison[model][metric]
+                    direction = "📈" if data["direction"] == "improved" else "📉" if data["direction"] == "degraded" else "➡️"
+                    
+                    st.markdown(f"""
+                        <div class='metric-card' style='text-align: center;'>
+                            <div style='font-size: 0.8em; color: #A0A0A0; margin-bottom: 8px;'>{metric.upper()}</div>
+                            <div style='font-size: 1.1em; color: #FFD93D; margin-bottom: 8px;'>{direction}</div>
+                            <div style='font-size: 0.9em; color: #E8E8E8;'>
+                                {data['baseline']:.3f} → {data['current']:.3f}
+                            </div>
+                            <div style='font-size: 0.8em; color: #4ECDC4; font-weight: 600; margin-top: 4px;'>
+                                {data['pct_change']:+.2f}%
+                            </div>
+                        </div>
+                    """, unsafe_allow_html=True)
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # Recommendations Section
+    st.markdown("<div class='section-title' style='font-size: 1.15em;'>💡 Recommendations</div>", unsafe_allow_html=True)
+    
+    recommendations = insights.get("recommendations", [])
+    if recommendations:
+        for i, rec in enumerate(recommendations):
+            st.markdown(f"""
+                <div class='insight-box' style='animation-delay: {i * 0.08}s; border-left: 4px solid #FFD93D;'>
+                    {rec}
+                </div>
+            """, unsafe_allow_html=True)
+    else:
+        st.info("No recommendations at this time")
 
 # ======================== ABOUT ========================
 elif selected == "ℹ️ About":

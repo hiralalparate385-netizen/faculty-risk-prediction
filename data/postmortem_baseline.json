@@ -1,0 +1,46 @@
+{
+  "timestamp": "2026-03-24T11:05:04.346417",
+  "metrics": {
+    "decision_tree": {
+      "accuracy": 0.7083333333333334,
+      "precision": 0.4,
+      "recall": 0.3333333333333333,
+      "f1_score": 0.36363636363636365,
+      "training_records": 96,
+      "timestamp": "2026-03-17T22:54:19.801454"
+    },
+    "logistic": {
+      "accuracy": 0.7916666666666666,
+      "precision": 0.5714285714285714,
+      "recall": 0.6666666666666666,
+      "f1_score": 0.6153846153846154,
+      "training_records": 96,
+      "timestamp": "2026-03-19T14:21:04.213619"
+    },
+    "random_forest": {
+      "accuracy": 0.8333333333333334,
+      "precision": 1.0,
+      "recall": 0.3333333333333333,
+      "f1_score": 0.5,
+      "training_records": 96,
+      "timestamp": "2026-03-17T22:55:14.775800"
+    },
+    "svm": {
+      "accuracy": 0.625,
+      "precision": 0.3333333333333333,
+      "recall": 0.5,
+      "f1_score": 0.4,
+      "training_records": 96,
+      "timestamp": "2026-03-17T22:56:06.826057"
+    },
+    "xgboost": {
+      "accuracy": 0.875,
+      "precision": 1.0,
+      "recall": 0.5,
+      "f1_score": 0.6666666666666666,
+      "training_records": 96,
+      "timestamp": "2026-03-17T23:42:47.956220"
+    }
+  },
+  "description": "Initial model baseline snapshot"
+}

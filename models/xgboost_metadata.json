@@ -49,10 +49,10 @@
     }
   },
   "test_metrics": {
-    "accuracy": 0.875,
+    "accuracy": 0.9375,
     "precision": 1.0,
-    "recall": 0.5,
-    "f1_score": 0.6666666666666666,
+    "recall": 0.6363636363636364,
+    "f1_score": 0.7777777777777778,
     "confusion_matrix": {
       "tn": 18,
       "fp": 0,
