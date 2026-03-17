@@ -1,0 +1,79 @@
+{
+  "model_type": "RandomForestClassifier",
+  "model_path": "c:\\Users\\Roominesh\\OneDrive\\Desktop\\Hackathon_3_Project\\models\\random_forest_model.joblib",
+  "training_timestamp": "2026-03-17T22:55:14.775800",
+  "training_records": 96,
+  "feature_names": [
+    "courses_assigned",
+    "weekly_teaching_hours",
+    "total_students_handled",
+    "admin_roles_count",
+    "years_of_experience",
+    "preparation_hours_per_week",
+    "term_Colors",
+    "term_Festival",
+    "term_Independence",
+    "term_Republic",
+    "exam_End Term",
+    "exam_Mid Term",
+    "exam_Unit Test 1",
+    "exam_Unit Test 2"
+  ],
+  "num_features": 14,
+  "model_parameters": {
+    "n_estimators": 100,
+    "max_depth": 7,
+    "min_samples_split": 5,
+    "min_samples_leaf": 2,
+    "random_state": 42
+  },
+  "justification": {
+    "reason": "Ensemble method for improved accuracy",
+    "advantages": [
+      "Reduces overfitting compared to single tree",
+      "Captures non-linear relationships",
+      "Handles feature interactions automatically",
+      "Robust to noise"
+    ]
+  },
+  "training_metrics": {
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1_score": 1.0,
+    "confusion_matrix": {
+      "tn": 74,
+      "fp": 0,
+      "fn": 0,
+      "tp": 22
+    }
+  },
+  "test_metrics": {
+    "accuracy": 0.8333333333333334,
+    "precision": 1.0,
+    "recall": 0.3333333333333333,
+    "f1_score": 0.5,
+    "confusion_matrix": {
+      "tn": 18,
+      "fp": 0,
+      "fn": 4,
+      "tp": 2
+    }
+  },
+  "feature_importance": {
+    "courses_assigned": 0.18530969318798315,
+    "weekly_teaching_hours": 0.1030690887585335,
+    "total_students_handled": 0.20885194939648621,
+    "admin_roles_count": 0.12301593826651218,
+    "years_of_experience": 0.10690503759721753,
+    "preparation_hours_per_week": 0.09976636148190428,
+    "term_Colors": 0.024122318601026156,
+    "term_Festival": 0.021271210898440897,
+    "term_Independence": 0.021490414656052826,
+    "term_Republic": 0.012290990879699237,
+    "exam_End Term": 0.029324035343392816,
+    "exam_Mid Term": 0.02406080958070395,
+    "exam_Unit Test 1": 0.019626360931224794,
+    "exam_Unit Test 2": 0.020895790420822413
+  }
+}

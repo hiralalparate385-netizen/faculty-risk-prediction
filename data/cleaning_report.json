@@ -1,0 +1,36 @@
+{
+  "timestamp": "2026-03-17T22:32:33.929674",
+  "raw_records": 120,
+  "cleaned_records": 120,
+  "duplicates_removed": 0,
+  "missing_values_handled": {
+    "preparation_hours_per_week": 24
+  },
+  "outliers_capped": {
+    "total_students_handled": 6,
+    "admin_roles_count": 5,
+    "preparation_hours_per_week": 4
+  },
+  "columns_in_cleaned_data": [
+    "faculty_id",
+    "courses_assigned",
+    "weekly_teaching_hours",
+    "total_students_handled",
+    "admin_roles_count",
+    "years_of_experience",
+    "preparation_hours_per_week",
+    "term",
+    "exam_type",
+    "workload_risk",
+    "term_original",
+    "exam_type_original",
+    "term_Colors",
+    "term_Festival",
+    "term_Independence",
+    "term_Republic",
+    "exam_End Term",
+    "exam_Mid Term",
+    "exam_Unit Test 1",
+    "exam_Unit Test 2"
+  ]
+}

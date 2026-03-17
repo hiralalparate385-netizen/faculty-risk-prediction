@@ -1,0 +1,32 @@
+{
+  "generation_timestamp": "2026-03-17T22:32:25.144276",
+  "total_records": 120,
+  "columns": [
+    "faculty_id",
+    "courses_assigned",
+    "weekly_teaching_hours",
+    "total_students_handled",
+    "admin_roles_count",
+    "years_of_experience",
+    "preparation_hours_per_week",
+    "term",
+    "exam_type",
+    "workload_risk"
+  ],
+  "missing_values": {
+    "faculty_id": 0,
+    "courses_assigned": 0,
+    "weekly_teaching_hours": 0,
+    "total_students_handled": 0,
+    "admin_roles_count": 0,
+    "years_of_experience": 0,
+    "preparation_hours_per_week": 24,
+    "term": 0,
+    "exam_type": 0,
+    "workload_risk": 0
+  },
+  "risk_distribution": {
+    "0": 92,
+    "1": 28
+  }
+}

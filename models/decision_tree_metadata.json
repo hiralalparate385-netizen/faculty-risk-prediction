@@ -1,0 +1,78 @@
+{
+  "model_type": "DecisionTreeClassifier",
+  "model_path": "c:\\Users\\Roominesh\\OneDrive\\Desktop\\Hackathon_3_Project\\models\\decision_tree_model.joblib",
+  "training_timestamp": "2026-03-17T22:54:19.801454",
+  "training_records": 96,
+  "feature_names": [
+    "courses_assigned",
+    "weekly_teaching_hours",
+    "total_students_handled",
+    "admin_roles_count",
+    "years_of_experience",
+    "preparation_hours_per_week",
+    "term_Colors",
+    "term_Festival",
+    "term_Independence",
+    "term_Republic",
+    "exam_End Term",
+    "exam_Mid Term",
+    "exam_Unit Test 1",
+    "exam_Unit Test 2"
+  ],
+  "num_features": 14,
+  "model_parameters": {
+    "max_depth": 5,
+    "min_samples_split": 5,
+    "min_samples_leaf": 2,
+    "random_state": 42
+  },
+  "justification": {
+    "reason": "Interpretable tree-based classification",
+    "advantages": [
+      "Handles non-linearity",
+      "No feature scaling required",
+      "Easy to visualize",
+      "Captures feature interactions"
+    ]
+  },
+  "training_metrics": {
+    "accuracy": 0.9791666666666666,
+    "precision": 0.9166666666666666,
+    "recall": 1.0,
+    "f1_score": 0.9565217391304348,
+    "confusion_matrix": {
+      "tn": 72,
+      "fp": 2,
+      "fn": 0,
+      "tp": 22
+    }
+  },
+  "test_metrics": {
+    "accuracy": 0.7083333333333334,
+    "precision": 0.4,
+    "recall": 0.3333333333333333,
+    "f1_score": 0.36363636363636365,
+    "confusion_matrix": {
+      "tn": 15,
+      "fp": 3,
+      "fn": 4,
+      "tp": 2
+    }
+  },
+  "feature_importance": {
+    "courses_assigned": 0.1822876470545311,
+    "weekly_teaching_hours": 0.13701035793533667,
+    "total_students_handled": 0.3559188125926569,
+    "admin_roles_count": 0.22396657852190896,
+    "years_of_experience": 0.051608986035215666,
+    "preparation_hours_per_week": 0.02734547794265524,
+    "term_Colors": 0.0,
+    "term_Festival": 0.0,
+    "term_Independence": 0.0,
+    "term_Republic": 0.0,
+    "exam_End Term": 0.0,
+    "exam_Mid Term": 0.0,
+    "exam_Unit Test 1": 0.0,
+    "exam_Unit Test 2": 0.021862139917695516
+  }
+}

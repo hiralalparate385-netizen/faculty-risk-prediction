@@ -1,0 +1,79 @@
+{
+  "model_type": "XGBoost (XGBClassifier)",
+  "model_path": "c:\\Users\\Roominesh\\OneDrive\\Desktop\\Hackathon_3_Project\\models\\xgboost_model.joblib",
+  "training_timestamp": "2026-03-17T22:45:26.733846",
+  "training_records": 96,
+  "feature_names": [
+    "courses_assigned",
+    "weekly_teaching_hours",
+    "total_students_handled",
+    "admin_roles_count",
+    "years_of_experience",
+    "preparation_hours_per_week",
+    "term_Colors",
+    "term_Festival",
+    "term_Independence",
+    "term_Republic",
+    "exam_End Term",
+    "exam_Mid Term",
+    "exam_Unit Test 1",
+    "exam_Unit Test 2"
+  ],
+  "num_features": 14,
+  "model_parameters": {
+    "n_estimators": 150,
+    "max_depth": 5,
+    "learning_rate": 0.1,
+    "subsample": 0.8,
+    "colsample_bytree": 0.8
+  },
+  "justification": {
+    "reason": "High-performance gradient boosting model",
+    "advantages": [
+      "Captures complex patterns",
+      "Handles non-linearity effectively",
+      "Often achieves highest accuracy",
+      "Robust to overfitting with proper tuning"
+    ]
+  },
+  "training_metrics": {
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1_score": 1.0,
+    "confusion_matrix": {
+      "tn": 74,
+      "fp": 0,
+      "fn": 0,
+      "tp": 22
+    }
+  },
+  "test_metrics": {
+    "accuracy": 0.875,
+    "precision": 1.0,
+    "recall": 0.5,
+    "f1_score": 0.6666666666666666,
+    "confusion_matrix": {
+      "tn": 18,
+      "fp": 0,
+      "fn": 3,
+      "tp": 3
+    }
+  },
+  "feature_importance": {
+    "courses_assigned": 0.1483050137758255,
+    "weekly_teaching_hours": 0.07096296548843384,
+    "total_students_handled": 0.0887804627418518,
+    "admin_roles_count": 0.12002073973417282,
+    "years_of_experience": 0.06397051364183426,
+    "preparation_hours_per_week": 0.08710552752017975,
+    "term_Colors": 0.0702967569231987,
+    "term_Festival": 0.04325513914227486,
+    "term_Independence": 0.042233146727085114,
+    "term_Republic": 0.03894428163766861,
+    "exam_End Term": 0.041954949498176575,
+    "exam_Mid Term": 0.07229623198509216,
+    "exam_Unit Test 1": 0.061606209725141525,
+    "exam_Unit Test 2": 0.05026804283261299
+  }
+}

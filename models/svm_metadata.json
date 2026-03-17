@@ -1,0 +1,62 @@
+{
+  "model_type": "SVM (SVC)",
+  "model_path": "c:\\Users\\Roominesh\\OneDrive\\Desktop\\Hackathon_3_Project\\models\\svm_model.joblib",
+  "scaler_path": "c:\\Users\\Roominesh\\OneDrive\\Desktop\\Hackathon_3_Project\\models\\svm_scaler.joblib",
+  "training_timestamp": "2026-03-17T22:56:06.826057",
+  "training_records": 96,
+  "feature_names": [
+    "courses_assigned",
+    "weekly_teaching_hours",
+    "total_students_handled",
+    "admin_roles_count",
+    "years_of_experience",
+    "preparation_hours_per_week",
+    "term_Colors",
+    "term_Festival",
+    "term_Independence",
+    "term_Republic",
+    "exam_End Term",
+    "exam_Mid Term",
+    "exam_Unit Test 1",
+    "exam_Unit Test 2"
+  ],
+  "num_features": 14,
+  "model_parameters": {
+    "kernel": "rbf",
+    "C": 1.0,
+    "gamma": "scale"
+  },
+  "justification": {
+    "reason": "Non-linear classification capability",
+    "advantages": [
+      "Effective in high-dimensional spaces",
+      "Handles non-linear boundaries",
+      "Robust with small datasets",
+      "Works well with clear margin separation"
+    ]
+  },
+  "training_metrics": {
+    "accuracy": 0.9270833333333334,
+    "precision": 0.7586206896551724,
+    "recall": 1.0,
+    "f1_score": 0.8627450980392157,
+    "confusion_matrix": {
+      "tn": 67,
+      "fp": 7,
+      "fn": 0,
+      "tp": 22
+    }
+  },
+  "test_metrics": {
+    "accuracy": 0.625,
+    "precision": 0.3333333333333333,
+    "recall": 0.5,
+    "f1_score": 0.4,
+    "confusion_matrix": {
+      "tn": 12,
+      "fp": 6,
+      "fn": 3,
+      "tp": 3
+    }
+  }
+}
