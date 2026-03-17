@@ -273,7 +273,7 @@ if selected == "🏠 Dashboard":
     
     # Key Insights
     st.markdown("<br>", unsafe_allow_html=True)
-    st.subheader("💡 Key Insights")
+    st.subheader("💡 Key Insights & Statistics")
     
     col1, col2 = st.columns(2)
     
@@ -282,7 +282,8 @@ if selected == "🏠 Dashboard":
         st.markdown(f"""
             <div class='insight-box'>
                 <strong>📚 Average Course Load</strong><br>
-                Faculty members teach an average of <strong>{avg_courses:.1f} courses</strong>
+                Faculty teach <strong>{avg_courses:.1f} courses</strong> on average<br>
+                <span style='color: #A0A0A0; font-size: 0.85em;'>Range: {int(df['courses_assigned'].min())}-{int(df['courses_assigned'].max())} courses</span>
             </div>
         """, unsafe_allow_html=True)
         
@@ -290,7 +291,8 @@ if selected == "🏠 Dashboard":
         st.markdown(f"""
             <div class='insight-box'>
                 <strong>⏰ Average Teaching Hours</strong><br>
-                Faculty spend <strong>{avg_hours:.1f} hours/week</strong> teaching
+                Faculty spend <strong>{avg_hours:.1f} hours/week</strong> teaching<br>
+                <span style='color: #A0A0A0; font-size: 0.85em;'>Range: {int(df['weekly_teaching_hours'].min())}-{int(df['weekly_teaching_hours'].max())} hours</span>
             </div>
         """, unsafe_allow_html=True)
     
@@ -299,7 +301,8 @@ if selected == "🏠 Dashboard":
         st.markdown(f"""
             <div class='insight-box'>
                 <strong>⚠️ High Risk Course Load</strong><br>
-                High-risk faculty teach <strong>{high_risk_courses:.1f} courses</strong> on average
+                High-risk faculty teach <strong>{high_risk_courses:.1f} courses</strong> (vs {df[df['workload_risk'] == 0]['courses_assigned'].mean():.1f} for low-risk)<br>
+                <span style='color: #A0A0A0; font-size: 0.85em;'>Difference: +{high_risk_courses - df[df['workload_risk'] == 0]['courses_assigned'].mean():.1f} courses</span>
             </div>
         """, unsafe_allow_html=True)
         
@@ -307,9 +310,178 @@ if selected == "🏠 Dashboard":
         st.markdown(f"""
             <div class='insight-box'>
                 <strong>⚠️ High Risk Teaching Hours</strong><br>
-                High-risk faculty work <strong>{high_risk_hours:.1f} hours/week</strong>
+                High-risk faculty work <strong>{high_risk_hours:.1f} hours/week</strong> (vs {df[df['workload_risk'] == 0]['weekly_teaching_hours'].mean():.1f} for low-risk)<br>
+                <span style='color: #A0A0A0; font-size: 0.85em;'>Difference: +{high_risk_hours - df[df['workload_risk'] == 0]['weekly_teaching_hours'].mean():.1f} hours</span>
             </div>
         """, unsafe_allow_html=True)
+    
+    # Additional analysis tabs
+    st.markdown("<br>", unsafe_allow_html=True)
+    tab1, tab2, tab3 = st.tabs(["📊 Detailed Breakdown", "🎯 Risk Factors", "💼 Experience Impact"])
+    
+    with tab1:
+        st.markdown("<div class='chart-container'>", unsafe_allow_html=True)
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            # Courses distribution
+            fig_courses = px.box(
+                df,
+                y='courses_assigned',
+                color='workload_risk',
+                color_discrete_map={0: '#4ECDC4', 1: '#FF6B6B'},
+                labels={'workload_risk': 'Risk Level', 'courses_assigned': 'Courses'},
+                points='all'
+            )
+            fig_courses.update_layout(
+                plot_bgcolor='rgba(0,0,0,0)',
+                paper_bgcolor='rgba(0,0,0,0)',
+                font=dict(color='#E8E8E8'),
+                height=350,
+                showlegend=False
+            )
+            st.plotly_chart(fig_courses, use_container_width=True, config={'displayModeBar': False})
+        
+        with col2:
+            # Teaching hours distribution
+            fig_hours = px.box(
+                df,
+                y='weekly_teaching_hours',
+                color='workload_risk',
+                color_discrete_map={0: '#4ECDC4', 1: '#FF6B6B'},
+                labels={'workload_risk': 'Risk Level', 'weekly_teaching_hours': 'Hours/Week'},
+                points='all'
+            )
+            fig_hours.update_layout(
+                plot_bgcolor='rgba(0,0,0,0)',
+                paper_bgcolor='rgba(0,0,0,0)',
+                font=dict(color='#E8E8E8'),
+                height=350,
+                showlegend=False
+            )
+            st.plotly_chart(fig_hours, use_container_width=True, config={'displayModeBar': False})
+        
+        st.markdown("</div>", unsafe_allow_html=True)
+    
+    with tab2:
+        st.markdown("<div class='chart-container'>", unsafe_allow_html=True)
+        
+        # Identify key risk factors
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            # Students handled vs risk
+            fig_students = px.scatter(
+                df,
+                x='total_students_handled',
+                y='weekly_teaching_hours',
+                color='workload_risk',
+                size='courses_assigned',
+                color_discrete_map={0: '#4ECDC4', 1: '#FF6B6B'},
+                labels={'total_students_handled': 'Total Students', 'weekly_teaching_hours': 'Teaching Hours/Week'},
+                title='Student Load vs Teaching Hours'
+            )
+            fig_students.update_layout(
+                plot_bgcolor='rgba(0,0,0,0)',
+                paper_bgcolor='rgba(0,0,0,0)',
+                font=dict(color='#E8E8E8'),
+                height=350
+            )
+            st.plotly_chart(fig_students, use_container_width=True, config={'displayModeBar': False})
+        
+        with col2:
+            # Admin roles impact
+            admin_risk = df.groupby('admin_roles_count').agg({
+                'workload_risk': ['count', 'sum'],
+                'weekly_teaching_hours': 'mean'
+            }).round(2)
+            admin_risk.columns = ['Total', 'High Risk', 'Avg Teaching Hours']
+            admin_risk['Risk %'] = (admin_risk['High Risk'] / admin_risk['Total'] * 100).round(1)
+            
+            fig_admin = px.bar(
+                x=admin_risk.index,
+                y=admin_risk['Risk %'],
+                color=admin_risk['Risk %'],
+                color_continuous_scale=['#4ECDC4', '#FFD93D', '#FF6B6B'],
+                labels={'x': 'Admin Roles', 'y': 'Risk %'}
+            )
+            fig_admin.update_layout(
+                plot_bgcolor='rgba(0,0,0,0)',
+                paper_bgcolor='rgba(0,0,0,0)',
+                font=dict(color='#E8E8E8'),
+                height=350,
+                showlegend=False,
+                title='Risk Rate by Admin Responsibilities'
+            )
+            st.plotly_chart(fig_admin, use_container_width=True, config={'displayModeBar': False})
+        
+        st.markdown("</div>", unsafe_allow_html=True)
+    
+    with tab3:
+        st.markdown("<div class='chart-container'>", unsafe_allow_html=True)
+        
+        # Experience vs workload
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            experience_risk = df.groupby(pd.cut(df['years_of_experience'], bins=5))['workload_risk'].agg(['count', 'sum']).round(0)
+            experience_risk.columns = ['Total', 'High Risk']
+            experience_risk['Risk %'] = (experience_risk['High Risk'] / experience_risk['Total'] * 100).round(1)
+            
+            fig_exp = px.bar(
+                x=[f"{int(x.left)}-{int(x.right)}" for x in experience_risk.index],
+                y=experience_risk['Risk %'].values,
+                color=experience_risk['Risk %'].values,
+                color_continuous_scale=['#4ECDC4', '#FFD93D', '#FF6B6B'],
+                labels={'x': 'Years of Experience', 'y': 'Risk %'},
+                title='Risk by Experience Level'
+            )
+            fig_exp.update_layout(
+                plot_bgcolor='rgba(0,0,0,0)',
+                paper_bgcolor='rgba(0,0,0,0)',
+                font=dict(color='#E8E8E8'),
+                height=350,
+                showlegend=False
+            )
+            st.plotly_chart(fig_exp, use_container_width=True, config={'displayModeBar': False})
+        
+        with col2:
+            # Preparation hours matter
+            st.markdown("""
+                <div class='insight-box'>
+                    <strong>📖 Preparation Time Impact</strong>
+                </div>
+            """, unsafe_allow_html=True)
+            
+            prep_stats = df.groupby('workload_risk')[['preparation_hours_per_week', 'weekly_teaching_hours', 'courses_assigned']].mean().round(1)
+            
+            col_a, col_b = st.columns(2)
+            
+            with col_a:
+                st.markdown(f"""
+                    <div style='background: rgba(78, 205, 196, 0.1); border-left: 3px solid #4ECDC4; padding: 10px; border-radius: 5px;'>
+                        <div style='font-size: 0.9em; color: #A0A0A0;'><strong>Low Risk Faculty</strong></div>
+                        <div style='font-size: 0.85em; color: #E8E8E8; margin-top: 5px;'>
+                            Prep Hours: {prep_stats.loc[0, 'preparation_hours_per_week']:.1f}/week<br>
+                            Teaching Hours: {prep_stats.loc[0, 'weekly_teaching_hours']:.1f}/week<br>
+                            Courses: {prep_stats.loc[0, 'courses_assigned']:.1f}
+                        </div>
+                    </div>
+                """, unsafe_allow_html=True)
+            
+            with col_b:
+                st.markdown(f"""
+                    <div style='background: rgba(255, 107, 107, 0.1); border-left: 3px solid #FF6B6B; padding: 10px; border-radius: 5px;'>
+                        <div style='font-size: 0.9em; color: #A0A0A0;'><strong>High Risk Faculty</strong></div>
+                        <div style='font-size: 0.85em; color: #E8E8E8; margin-top: 5px;'>
+                            Prep Hours: {prep_stats.loc[1, 'preparation_hours_per_week']:.1f}/week<br>
+                            Teaching Hours: {prep_stats.loc[1, 'weekly_teaching_hours']:.1f}/week<br>
+                            Courses: {prep_stats.loc[1, 'courses_assigned']:.1f}
+                        </div>
+                    </div>
+                """, unsafe_allow_html=True)
+        
+        st.markdown("</div>", unsafe_allow_html=True)
 
 # ======================== ANALYTICS ========================
 elif selected == "📊 Analytics":
@@ -461,57 +633,164 @@ elif selected == "🔮 Prediction":
     
     st.markdown("""
         <div class='insight-box'>
-            <strong>💡 How it works:</strong> Adjust faculty parameters to predict their workload risk level using our AI model.
+            <strong>💡 How it works:</strong> Enter faculty details below to predict workload risk with our advanced AI model.
         </div>
     """, unsafe_allow_html=True)
     
-    col1, col2 = st.columns([1, 1.5])
+    # Helper statistics from data
+    avg_courses = df['courses_assigned'].mean()
+    avg_hours = df['weekly_teaching_hours'].mean()
+    avg_students = df['total_students_handled'].mean()
+    avg_prep = df['preparation_hours_per_week'].mean()
+    
+    col1, col2 = st.columns([1.2, 1.8])
     
     with col1:
         st.markdown("### 📋 Faculty Profile")
         st.markdown("<br>", unsafe_allow_html=True)
         
-        courses = st.slider("📚 Courses Assigned", 1, 6, 3, help="Number of courses taught")
-        weekly_hours = st.slider("⏰ Weekly Teaching Hours", 0, 30, 12, help="Total hours spent teaching per week")
-        students = st.slider("👥 Total Students", 10, 300, 100, help="Total number of students taught")
+        # Use compact number inputs with columns for space efficiency
+        input_col1, input_col2 = st.columns(2)
         
-        st.markdown("<br>", unsafe_allow_html=True)
+        with input_col1:
+            courses = st.number_input(
+                "📚 Courses",
+                min_value=1,
+                max_value=6,
+                value=3,
+                help=f"Avg: {avg_courses:.1f}"
+            )
         
-        admin_roles = st.slider("📋 Admin Roles", 0, 5, 1, help="Number of administrative responsibilities")
-        experience = st.slider("📅 Years of Experience", 1, 40, 10, help="Years in academia")
-        prep_hours = st.slider("📖 Preparation Hours", 0, 20, 5, help="Hours spent on preparation per week")
+        with input_col2:
+            admin_roles = st.number_input(
+                "📋 Admin Roles",
+                min_value=0,
+                max_value=5,
+                value=1,
+                help="0-5 roles"
+            )
+        
+        input_col1, input_col2 = st.columns(2)
+        
+        with input_col1:
+            weekly_hours = st.number_input(
+                "⏰ Teaching Hours",
+                min_value=0,
+                max_value=30,
+                value=12,
+                step=1,
+                help=f"Weekly hours (Avg: {avg_hours:.1f})"
+            )
+        
+        with input_col2:
+            experience = st.number_input(
+                "📅 Experience",
+                min_value=1,
+                max_value=40,
+                value=10,
+                step=1,
+                help="Years in academia"
+            )
+        
+        input_col1, input_col2 = st.columns(2)
+        
+        with input_col1:
+            students = st.number_input(
+                "👥 Students",
+                min_value=10,
+                max_value=300,
+                value=100,
+                step=10,
+                help=f"Total students (Avg: {avg_students:.0f})"
+            )
+        
+        with input_col2:
+            prep_hours = st.number_input(
+                "📖 Prep Hours",
+                min_value=0,
+                max_value=20,
+                value=5,
+                step=1,
+                help=f"Weekly prep hrs (Avg: {avg_prep:.1f})"
+            )
+        
+        st.markdown("<hr style='border-color: rgba(255, 255, 255, 0.1); margin: 15px 0;'>", unsafe_allow_html=True)
+        
+        # Faculty workload summary
+        total_load = (courses * 3) + weekly_hours + prep_hours
+        st.markdown(f"""
+            <div style='background: rgba(255, 107, 107, 0.1); border-left: 3px solid #FF6B6B; padding: 10px; border-radius: 5px; margin: 10px 0;'>
+                <div style='font-size: 0.85em; color: #A0A0A0;'>Total Work Units</div>
+                <div style='font-size: 1.4em; font-weight: 800; color: #FFD93D;'>{total_load}</div>
+            </div>
+        """, unsafe_allow_html=True)
     
     with col2:
-        st.markdown("### 📊 Live Preview")
+        st.markdown("### 📊 Comparative Analysis")
+        st.markdown("<br>", unsafe_allow_html=True)
         
-        # Create a nice preview
-        preview_data = {
-            'Metric': ['Courses', 'Teaching Hours', 'Students', 'Admin Roles', 'Experience', 'Prep Hours'],
-            'Value': [courses, f'{weekly_hours}h', students, admin_roles, f'{experience} yrs', f'{prep_hours}h']
+        # Compare with dataset averages
+        comparison_data = {
+            'Parameter': ['Courses', 'Teaching Hrs', 'Students', 'Admin Roles', 'Experience', 'Prep Hours'],
+            'Your Input': [courses, weekly_hours, students, admin_roles, experience, prep_hours],
+            'Dataset Avg': [
+                f"{avg_courses:.1f}",
+                f"{avg_hours:.1f}",
+                f"{avg_students:.0f}",
+                "1.2",
+                "12.5",
+                f"{avg_prep:.1f}"
+            ]
         }
-        preview_df = pd.DataFrame(preview_data)
         
-        fig_preview = go.Figure(data=[go.Table(
-            header=dict(
-                values=['<b>Metric</b>', '<b>Value</b>'],
-                fill_color='rgba(255, 107, 107, 0.3)',
-                align='center',
-                font=dict(color='#E8E8E8', size=12)
-            ),
-            cells=dict(
-                values=[preview_df['Metric'], preview_df['Value']],
-                fill_color='rgba(26, 31, 46, 0.5)',
-                align='center',
-                font=dict(color='#E8E8E8', size=11)
-            )
-        )])
-        fig_preview.update_layout(
-            height=350,
-            paper_bgcolor='rgba(0,0,0,0)',
-            plot_bgcolor='rgba(0,0,0,0)',
-            margin=dict(l=0, r=0, t=0, b=0)
-        )
-        st.plotly_chart(fig_preview, use_container_width=True, config={'displayModeBar': False})
+        comp_df = pd.DataFrame(comparison_data)
+        
+        st.markdown("**📈 How you compare to other faculty:**")
+        
+        # Comparison visualization
+        col_comp1, col_comp2 = st.columns([1, 1])
+        
+        with col_comp1:
+            # Courses comparison
+            fig_comp1 = go.Figure(data=[
+                go.Bar(name='Your Load', x=['Courses'], y=[courses], marker_color='#FF6B6B'),
+                go.Bar(name='Average', x=['Courses'], y=[avg_courses], marker_color='#4ECDC4')
+            ])
+            fig_comp1.update_layout(height=250, plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', 
+                                   font=dict(color='#E8E8E8'), showlegend=False, margin=dict(l=0, r=0, t=0, b=0))
+            st.plotly_chart(fig_comp1, use_container_width=True, config={'displayModeBar': False})
+        
+        with col_comp2:
+            # Teaching hours comparison
+            fig_comp2 = go.Figure(data=[
+                go.Bar(name='Your Load', x=['Teaching Hours'], y=[weekly_hours], marker_color='#FF6B6B'),
+                go.Bar(name='Average', x=['Teaching Hours'], y=[avg_hours], marker_color='#4ECDC4')
+            ])
+            fig_comp2.update_layout(height=250, plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', 
+                                   font=dict(color='#E8E8E8'), showlegend=False, margin=dict(l=0, r=0, t=0, b=0))
+            st.plotly_chart(fig_comp2, use_container_width=True, config={'displayModeBar': False})
+        
+        # Risk factors display
+        st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown("**⚠️ Risk Factors Assessment:**")
+        
+        risk_factors = []
+        if courses >= 5:
+            risk_factors.append("🔴 High course load (5+ courses)")
+        if weekly_hours >= 20:
+            risk_factors.append("🔴 High teaching hours (20+ hrs/week)")
+        if students >= 200:
+            risk_factors.append("🟡 Large student population (200+ students)")
+        if admin_roles >= 3:
+            risk_factors.append("🟡 Multiple admin roles (3+ roles)")
+        if prep_hours <= 3:
+            risk_factors.append("🟠 Low preparation time")
+        
+        if risk_factors:
+            for factor in risk_factors:
+                st.markdown(f"<div style='color: #E8E8E8; font-size: 0.9em; margin: 3px 0;'>{factor}</div>", unsafe_allow_html=True)
+        else:
+            st.markdown("<div style='color: #4ECDC4; font-size: 0.9em;'>✅ No major risk factors detected</div>", unsafe_allow_html=True)
     
     # Prediction
     st.markdown("<br>", unsafe_allow_html=True)
@@ -574,10 +853,11 @@ elif selected == "🔮 Prediction":
         with col2:
             # Risk Score Gauge
             fig_gauge = go.Figure(go.Indicator(
-                mode="gauge+number",
+                mode="gauge+number+delta",
                 value=prob * 100,
                 domain={'x': [0, 1], 'y': [0, 1]},
                 title={'text': "Risk Score (%)"},
+                delta={'reference': 50},
                 gauge={
                     'axis': {'range': [0, 100]},
                     'bar': {'color': '#FF6B6B'},
@@ -597,49 +877,157 @@ elif selected == "🔮 Prediction":
                 paper_bgcolor='rgba(0,0,0,0)',
                 plot_bgcolor='rgba(0,0,0,0)',
                 font=dict(color='#E8E8E8'),
-                height=350
+                height=300
             )
             st.plotly_chart(fig_gauge, use_container_width=True, config={'displayModeBar': False})
         
-        # Recommendations
+        # Detailed Analysis
         st.markdown("<br>", unsafe_allow_html=True)
-        st.subheader("💡 Recommendations")
+        st.subheader("📊 Detailed Risk Analysis")
         
-        if prediction == 1:
-            col1, col2 = st.columns(2)
-            with col1:
-                st.markdown("""
-                    <div class='insight-box'>
-                        <strong>✂️ Course Load Reduction</strong><br>
-                        Consider reducing the number of courses from """ + str(courses) + """ to """ + str(max(1, courses-1)) + """
+        # Calculate risk metrics
+        risk_score = prob * 100
+        workload_index = (courses * 15) + (weekly_hours * 2) + (students / 20) + (prep_hours * 3)
+        
+        col1, col2, col3, col4 = st.columns(4)
+        
+        with col1:
+            st.markdown(f"""
+                <div class='metric-card'>
+                    <div style='font-size: 0.85em; color: #A0A0A0;'>Risk Probability</div>
+                    <div style='font-size: 1.6em; font-weight: 800; color: #FF6B6B;'>{risk_score:.1f}%</div>
+                    <div style='font-size: 0.75em; color: #A0A0A0; margin-top: 5px;'>
+                        {"High" if risk_score > 50 else "Low"} Risk
                     </div>
-                """, unsafe_allow_html=True)
-                st.markdown("""
-                    <div class='insight-box'>
-                        <strong>⏰ Time Management</strong><br>
-                        Current teaching load: """ + str(weekly_hours) + """ hours. Target: < 15 hours/week
-                    </div>
-                """, unsafe_allow_html=True)
-            with col2:
-                st.markdown("""
-                    <div class='insight-box'>
-                        <strong>👥 Student Distribution</strong><br>
-                        Consider distributing """ + str(students) + """ students across multiple sections
-                    </div>
-                """, unsafe_allow_html=True)
-                st.markdown("""
-                    <div class='insight-box'>
-                        <strong>📋 Admin Duties</strong><br>
-                        Delegate some admin roles to reduce additional stress
-                    </div>
-                """, unsafe_allow_html=True)
-        else:
-            st.markdown("""
-                <div class='insight-box'>
-                    <strong>✅ Current workload is well-balanced</strong><br>
-                    Keep maintaining this sustainable workload level
                 </div>
             """, unsafe_allow_html=True)
+        
+        with col2:
+            st.markdown(f"""
+                <div class='metric-card'>
+                    <div style='font-size: 0.85em; color: #A0A0A0;'>Workload Index</div>
+                    <div style='font-size: 1.6em; font-weight: 800; color: #4ECDC4;'>{workload_index:.0f}</div>
+                    <div style='font-size: 0.75em; color: #A0A0A0; margin-top: 5px;'>
+                        {"Heavy" if workload_index > 200 else "Moderate" if workload_index > 100 else "Light"}
+                    </div>
+                </div>
+            """, unsafe_allow_html=True)
+        
+        with col3:
+            efficiency = (prep_hours / (weekly_hours + 1)) * 100
+            st.markdown(f"""
+                <div class='metric-card'>
+                    <div style='font-size: 0.85em; color: #A0A0A0;'>Prep Efficiency</div>
+                    <div style='font-size: 1.6em; font-weight: 800; color: #FFD93D;'>{efficiency:.0f}%</div>
+                    <div style='font-size: 0.75em; color: #A0A0A0; margin-top: 5px;'>
+                        {"Good" if efficiency > 30 else "Needs attention"}
+                    </div>
+                </div>
+            """, unsafe_allow_html=True)
+        
+        with col4:
+            student_per_course = students / courses if courses > 0 else 0
+            st.markdown(f"""
+                <div class='metric-card'>
+                    <div style='font-size: 0.85em; color: #A0A0A0;'>Avg Students/Course</div>
+                    <div style='font-size: 1.6em; font-weight: 800; color: #4ECDC4;'>{student_per_course:.0f}</div>
+                    <div style='font-size: 0.75em; color: #A0A0A0; margin-top: 5px;'>
+                        Per course load
+                    </div>
+                </div>
+            """, unsafe_allow_html=True)
+        
+        # Recommendations
+        st.markdown("<br>", unsafe_allow_html=True)
+        st.subheader("💡 Personalized Recommendations")
+        
+        recommendations = []
+        
+        # Generate smart recommendations based on data
+        if courses >= 5:
+            recommendations.append(("✂️ Reduce Course Load", f"Consider teaching {max(1, courses-1)} courses instead of {courses} to focus on quality."))
+        
+        if weekly_hours >= 20:
+            recommendations.append(("⏰ Optimize Teaching Time", f"Your teaching load is {weekly_hours} hours/week. Target: 12-15 hours/week."))
+        
+        if students >= 200:
+            recommendations.append(("👥 Distribute Students", f"Break down your {students} students into smaller sections for better engagement."))
+        
+        if admin_roles >= 3:
+            recommendations.append(("📋 Delegate Admin Duties", "Consider delegating some administrative responsibilities to colleagues."))
+        
+        if prep_hours <= 3 and (courses >= 3 or weekly_hours >= 15):
+            recommendations.append(("📖 Increase Prep Time", "Allocate more time for course preparation and grading."))
+        
+        if experience < 5 and courses >= 4:
+            recommendations.append(("🎓 Mentor Support", "As a newer faculty, consider reducing course load to 3-4 courses."))
+        
+        if not recommendations:
+            st.markdown("""
+                <div class='insight-box' style='text-align: center;'>
+                    <strong>✅ Your workload appears well-balanced!</strong><br>
+                    Continue maintaining this sustainable pace and focus on quality education.
+                </div>
+            """, unsafe_allow_html=True)
+        else:
+            for idx, (title, desc) in enumerate(recommendations, 1):
+                col = st.columns(1)[0]
+                st.markdown(f"""
+                    <div class='insight-box'>
+                        <strong>{title}</strong><br>
+                        {desc}
+                    </div>
+                """, unsafe_allow_html=True)
+        
+        # Comparative insights
+        st.markdown("<br>", unsafe_allow_html=True)
+        st.subheader("📈 Comparative Insights")
+        
+        # Find similar faculty from dataset
+        similar_faculty = df[
+            (df['courses_assigned'] == courses) &
+            (df['admin_roles_count'] == admin_roles)
+        ]
+        
+        if len(similar_faculty) > 0:
+            similar_risk = similar_faculty['workload_risk'].sum()
+            similar_total = len(similar_faculty)
+            similar_risk_pct = (similar_risk / similar_total * 100).round(1) if similar_total > 0 else 0
+            
+            st.markdown(f"""
+                <div class='insight-box'>
+                    <strong>🔍 Similar Faculty Profile Found</strong><br>
+                    Found {similar_total} faculty with {courses} courses and {admin_roles} admin roles<br>
+                    Risk rate among them: <strong>{similar_risk_pct}%</strong> (Your risk: <strong>{risk_score:.1f}%</strong>)
+                </div>
+            """, unsafe_allow_html=True)
+        
+        # Comparison with high vs low risk groups
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            high_risk_df = df[df['workload_risk'] == 1]
+            if len(high_risk_df) > 0:
+                st.markdown(f"""
+                    <div class='insight-box'>
+                        <strong>⚠️ High Risk Faculty Average</strong><br>
+                        Courses: {high_risk_df['courses_assigned'].mean():.1f}<br>
+                        Teaching Hours: {high_risk_df['weekly_teaching_hours'].mean():.1f}/week<br>
+                        Students: {high_risk_df['total_students_handled'].mean():.0f}
+                    </div>
+                """, unsafe_allow_html=True)
+        
+        with col2:
+            low_risk_df = df[df['workload_risk'] == 0]
+            if len(low_risk_df) > 0:
+                st.markdown(f"""
+                    <div class='insight-box'>
+                        <strong>✅ Low Risk Faculty Average</strong><br>
+                        Courses: {low_risk_df['courses_assigned'].mean():.1f}<br>
+                        Teaching Hours: {low_risk_df['weekly_teaching_hours'].mean():.1f}/week<br>
+                        Students: {low_risk_df['total_students_handled'].mean():.0f}
+                    </div>
+                """, unsafe_allow_html=True)
 
 # ======================== MODEL COMPARISON ========================
 elif selected == "📈 Model Comparison":
