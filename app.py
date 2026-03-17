@@ -113,9 +113,16 @@ st.markdown("""
 # ======================== PATHS & DATA LOADING ========================
 BASE_DIR = Path(__file__).parent
 DATABASE_PATH = BASE_DIR / "data" / "faculty.db"
-MODEL_PATH = BASE_DIR / "models" / "logistic_model.joblib"
-SCALER_PATH = BASE_DIR / "models" / "logistic_scaler.joblib"
-MODELS_DIR = BASE_DIR / "models"
+MODEL_DIR = BASE_DIR / "models"
+
+# Available models
+AVAILABLE_MODELS = {
+    'logistic': {'path': MODEL_DIR / "logistic_model.joblib", 'scaler': MODEL_DIR / "logistic_scaler.joblib"},
+    'svm': {'path': MODEL_DIR / "svm_model.joblib", 'scaler': MODEL_DIR / "svm_scaler.joblib"},
+    'random_forest': {'path': MODEL_DIR / "random_forest_model.joblib", 'scaler': None},
+    'decision_tree': {'path': MODEL_DIR / "decision_tree_model.joblib", 'scaler': None},
+    'xgboost': {'path': MODEL_DIR / "xgboost_model.joblib", 'scaler': None},
+}
 
 @st.cache_data
 def load_data():
@@ -125,20 +132,33 @@ def load_data():
     return df
 
 @st.cache_resource
-def load_model():
-    return joblib.load(MODEL_PATH), joblib.load(SCALER_PATH)
+def load_model(model_name='logistic'):
+    """Load specified model and its scaler"""
+    if model_name not in AVAILABLE_MODELS:
+        model_name = 'logistic'
+    
+    model_config = AVAILABLE_MODELS[model_name]
+    model = joblib.load(model_config['path'])
+    
+    scaler = None
+    if model_config['scaler'] and model_config['scaler'].exists():
+        scaler = joblib.load(model_config['scaler'])
+    
+    return model, scaler
 
 @st.cache_data
 def load_all_models_metadata():
     metadata = {}
-    for model_file in MODELS_DIR.glob("*_metadata.json"):
+    for model_file in MODEL_DIR.glob("*_metadata.json"):
         with open(model_file) as f:
             metadata[model_file.stem.replace("_metadata", "")] = json.load(f)
     return metadata
 
 df = load_data()
-model, scaler = load_model()
 models_metadata = load_all_models_metadata()
+
+# Default model
+default_model, default_scaler = load_model('logistic')
 
 # ======================== SIDEBAR MENU ========================
 with st.sidebar:
@@ -637,6 +657,57 @@ elif selected == "🔮 Prediction":
         </div>
     """, unsafe_allow_html=True)
     
+    # Model Selection
+    st.markdown("### 🤖 Select Prediction Model")
+    model_col1, model_col2, model_col3 = st.columns(3)
+    
+    with model_col1:
+        selected_model_name = st.selectbox(
+            "Choose Model:",
+            ['Logistic Regression', 'SVM', 'Random Forest', 'Decision Tree', 'XGBoost'],
+            help="Different models may give different predictions"
+        )
+        
+        model_key = selected_model_name.lower().replace(' ', '_')
+        if 'logistic' in model_key:
+            model_key = 'logistic'
+        elif 'svm' in model_key:
+            model_key = 'svm'
+        elif 'random' in model_key:
+            model_key = 'random_forest'
+        elif 'decision' in model_key:
+            model_key = 'decision_tree'
+        elif 'xgboost' in model_key:
+            model_key = 'xgboost'
+        
+        # Load selected model
+        selected_model, selected_scaler = load_model(model_key)
+    
+    # Show model info
+    with model_col2:
+        if model_key in models_metadata:
+            meta = models_metadata[model_key]
+            accuracy = meta.get('test_metrics', {}).get('accuracy', 'N/A')
+            st.markdown(f"""
+                <div style='text-align: center; padding: 10px; background: rgba(255, 107, 107, 0.1); border-radius: 8px;'>
+                    <div style='font-size: 0.85em; color: #A0A0A0;'>Model Accuracy</div>
+                    <div style='font-size: 1.4em; font-weight: 800; color: #4ECDC4;'>{accuracy if isinstance(accuracy, str) else f"{accuracy:.2%}"}</div>
+                </div>
+            """, unsafe_allow_html=True)
+    
+    with model_col3:
+        if model_key in models_metadata:
+            meta = models_metadata[model_key]
+            f1 = meta.get('test_metrics', {}).get('f1_score', 'N/A')
+            st.markdown(f"""
+                <div style='text-align: center; padding: 10px; background: rgba(78, 205, 196, 0.1); border-radius: 8px;'>
+                    <div style='font-size: 0.85em; color: #A0A0A0;'>F1-Score</div>
+                    <div style='font-size: 1.4em; font-weight: 800; color: #FFD93D;'>{f1 if isinstance(f1, str) else f"{f1:.4f}"}</div>
+                </div>
+            """, unsafe_allow_html=True)
+    
+    st.markdown("<hr style='border-color: rgba(255, 255, 255, 0.1); margin: 20px 0;'>", unsafe_allow_html=True)
+    
     # Helper statistics from data
     avg_courses = df['courses_assigned'].mean()
     avg_hours = df['weekly_teaching_hours'].mean()
@@ -819,9 +890,15 @@ elif selected == "🔮 Prediction":
             *exam_cols
         ]])
         
-        input_scaled = scaler.transform(input_data)
-        prob = model.predict_proba(input_scaled)[0][1]
-        prediction = model.predict(input_scaled)[0]
+        # Scale input if scaler available
+        if selected_scaler:
+            input_scaled = selected_scaler.transform(input_data)
+        else:
+            input_scaled = input_data
+        
+        # Get predictions from selected model
+        prob = selected_model.predict_proba(input_scaled)[0][1]
+        prediction = selected_model.predict(input_scaled)[0]
         
         st.markdown("<br>", unsafe_allow_html=True)
         
@@ -1028,6 +1105,72 @@ elif selected == "🔮 Prediction":
                         Students: {low_risk_df['total_students_handled'].mean():.0f}
                     </div>
                 """, unsafe_allow_html=True)
+        
+        # All Models Predictions Comparison
+        st.markdown("<br>", unsafe_allow_html=True)
+        st.subheader("🎯 All Models Predictions")
+        
+        all_predictions = []
+        for model_name in ['logistic', 'svm', 'random_forest', 'decision_tree', 'xgboost']:
+            try:
+                m, s = load_model(model_name)
+                if s:
+                    inp_scaled = s.transform(input_data)
+                else:
+                    inp_scaled = input_data
+                
+                pred_prob = m.predict_proba(inp_scaled)[0][1]
+                pred = m.predict(inp_scaled)[0]
+                
+                # Get model accuracy
+                model_accuracy = 0.0
+                if model_name in models_metadata:
+                    model_accuracy = models_metadata[model_name].get('test_metrics', {}).get('accuracy', 0.0)
+                
+                all_predictions.append({
+                    'Model': model_name.replace('_', ' ').title(),
+                    'Risk %': f"{pred_prob*100:.1f}%",
+                    'Prediction': '🔴 HIGH RISK' if pred == 1 else '✅ LOW RISK',
+                    'Accuracy': f"{model_accuracy:.1%}",
+                    'Confidence': pred_prob * 100
+                })
+            except:
+                pass
+        
+        if all_predictions:
+            pred_df = pd.DataFrame(all_predictions)
+            
+            col1, col2 = st.columns([1, 1])
+            
+            with col1:
+                # Table of all predictions
+                display_df = pred_df[['Model', 'Risk %', 'Prediction', 'Accuracy']].copy()
+                st.dataframe(display_df, use_container_width=True)
+            
+            with col2:
+                # Visualization of confidence scores
+                fig_consensus = go.Figure(data=[
+                    go.Bar(
+                        y=pred_df['Model'],
+                        x=pred_df['Confidence'],
+                        orientation='h',
+                        marker=dict(
+                            color=pred_df['Confidence'],
+                            colorscale=['#4ECDC4', '#FFD93D', '#FF6B6B'],
+                            showscale=False
+                        )
+                    )
+                ])
+                fig_consensus.update_layout(
+                    title="Model Consensus",
+                    xaxis_title="Risk Confidence (%)",
+                    plot_bgcolor='rgba(0,0,0,0)',
+                    paper_bgcolor='rgba(0,0,0,0)',
+                    font=dict(color='#E8E8E8'),
+                    height=350,
+                    margin=dict(l=80)
+                )
+                st.plotly_chart(fig_consensus, use_container_width=True, config={'displayModeBar': False})
 
 # ======================== MODEL COMPARISON ========================
 elif selected == "📈 Model Comparison":
