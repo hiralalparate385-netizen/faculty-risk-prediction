@@ -1,7 +1,7 @@
 {
   "model_type": "XGBoost (XGBClassifier)",
   "model_path": "c:\\Users\\Roominesh\\OneDrive\\Desktop\\Hackathon_3_Project\\models\\xgboost_model.joblib",
-  "training_timestamp": "2026-03-17T22:45:26.733846",
+  "training_timestamp": "2026-03-17T23:42:47.956220",
   "training_records": 96,
   "feature_names": [
     "courses_assigned",
