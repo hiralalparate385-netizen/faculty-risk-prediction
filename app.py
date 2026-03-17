@@ -8,71 +8,362 @@ import plotly.graph_objects as go
 from pathlib import Path
 from streamlit_option_menu import option_menu
 import json
+from datetime import datetime
 
 # ======================== PAGE CONFIG ========================
 st.set_page_config(
-    page_title="Faculty Workload Prediction System",
+    page_title="Faculty Workload Intelligence Platform",
     page_icon="🎓",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# ======================== CUSTOM CSS ========================
+# ======================== ADVANCED CUSTOM CSS - GLASSMORPHISM & ANIMATIONS ========================
 st.markdown("""
     <style>
-    :root {
-        --primary-color: #FF6B6B;
-        --secondary-color: #4ECDC4;
-        --dark-bg: #0F1419;
-        --light-bg: #1A1F2E;
-        --accent: #FFD93D;
-        --text-light: #E8E8E8;
-    }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap');
     
     * {
         margin: 0;
         padding: 0;
+        font-family: 'Inter', sans-serif;
     }
     
-    .main {
-        background: linear-gradient(135deg, #0F1419 0%, #1A1F2E 100%);
-        color: #E8E8E8;
+    html, body, [data-testid="stAppViewContainer"] {
+        background: linear-gradient(135deg, #0A0E27 0%, #1a1f3a 50%, #0f1419 100%) !important;
+        color: #E8E8E8 !important;
+        overflow-x: hidden;
     }
     
-    .stTabs [data-baseweb="tab-list"] button {
+    /* ===== GLASSMORPHISM CARDS ===== */
+    .glass-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .glass-card:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        transform: translateY(-4px);
+        box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.5);
+    }
+    
+    /* ===== METRIC CARDS - ENHANCED ===== */
+    .metric-card-premium {
+        background: linear-gradient(135deg, rgba(255, 107, 107, 0.1) 0%, rgba(255, 107, 107, 0.05) 100%);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 107, 107, 0.2);
+        border-radius: 16px;
+        padding: 28px;
+        box-shadow: 0 8px 32px rgba(255, 107, 107, 0.1);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .metric-card-premium::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        transition: left 0.5s;
+    }
+    
+    .metric-card-premium:hover::before {
+        left: 100%;
+    }
+    
+    .metric-card-premium:hover {
+        transform: translateY(-6px) scale(1.02);
+        background: linear-gradient(135deg, rgba(255, 107, 107, 0.15) 0%, rgba(255, 107, 107, 0.08) 100%);
+        border: 1px solid rgba(255, 107, 107, 0.3);
+        box-shadow: 0 16px 48px rgba(255, 107, 107, 0.2);
+    }
+    
+    .metric-card-success {
+        background: linear-gradient(135deg, rgba(78, 205, 196, 0.1) 0%, rgba(78, 205, 196, 0.05) 100%);
+        border: 1px solid rgba(78, 205, 196, 0.2);
+        box-shadow: 0 8px 32px rgba(78, 205, 196, 0.1);
+    }
+    
+    .metric-card-success:hover {
+        background: linear-gradient(135deg, rgba(78, 205, 196, 0.15) 0%, rgba(78, 205, 196, 0.08) 100%);
+        border: 1px solid rgba(78, 205, 196, 0.3);
+        box-shadow: 0 16px 48px rgba(78, 205, 196, 0.2);
+    }
+    
+    .metric-card-warning {
+        background: linear-gradient(135deg, rgba(255, 217, 61, 0.1) 0%, rgba(255, 217, 61, 0.05) 100%);
+        border: 1px solid rgba(255, 217, 61, 0.2);
+        box-shadow: 0 8px 32px rgba(255, 217, 61, 0.1);
+    }
+    
+    .metric-card-warning:hover {
+        background: linear-gradient(135deg, rgba(255, 217, 61, 0.15) 0%, rgba(255, 217, 61, 0.08) 100%);
+        border: 1px solid rgba(255, 217, 61, 0.3);
+        box-shadow: 0 16px 48px rgba(255, 217, 61, 0.2);
+    }
+    
+    /* ===== TYPOGRAPHY ===== */
+    .title-premium {
+        font-family: 'Poppins', sans-serif;
+        font-size: 3.2em;
+        font-weight: 800;
+        background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 50%, #FFD93D 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 8px;
+        letter-spacing: -1px;
+    }
+    
+    .subtitle-premium {
+        font-size: 1.15em;
+        color: #B0B0B0;
+        font-weight: 400;
+        margin-bottom: 30px;
+        letter-spacing: 0.5px;
+    }
+    
+    .section-title {
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.6em;
+        font-weight: 700;
         color: #E8E8E8;
-        background-color: transparent;
-        border-radius: 8px;
-        font-weight: 600;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    /* ===== CHART CONTAINERS ===== */
+    .chart-wrapper {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        padding: 24px;
+        margin: 20px 0;
         transition: all 0.3s ease;
     }
     
+    .chart-wrapper:hover {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    
+    /* ===== BUTTONS ===== */
+    .stButton > button {
+        background: linear-gradient(135deg, #FF6B6B 0%, #FF8787 100%) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 12px !important;
+        padding: 12px 32px !important;
+        font-weight: 600 !important;
+        font-size: 1em !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3) !important;
+        letter-spacing: 0.5px !important;
+    }
+    
+    .stButton > button:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 12px 30px rgba(255, 107, 107, 0.4) !important;
+        background: linear-gradient(135deg, #FF8787 0%, #FF6B6B 100%) !important;
+    }
+    
+    .stButton > button:active {
+        transform: translateY(0) !important;
+    }
+    
+    /* ===== INPUT STYLING ===== */
+    .stNumberInput > div > div > input,
+    .stSelectbox > div > div > select,
+    .stMultiSelect > div > div > select {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: #E8E8E8 !important;
+        border-radius: 12px !important;
+        font-size: 1em !important;
+        padding: 12px 16px !important;
+        transition: all 0.3s ease !important;
+    }
+    
+    .stNumberInput > div > div > input:focus,
+    .stSelectbox > div > div > select:focus {
+        background: rgba(255, 255, 255, 0.1) !important;
+        border: 1px solid rgba(255, 107, 107, 0.4) !important;
+        box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1) !important;
+    }
+    
+    /* ===== TABS ===== */
+    .stTabs [data-baseweb="tab-list"] button {
+        color: #A0A0A0 !important;
+        background-color: transparent !important;
+        border-radius: 12px !important;
+        font-weight: 600 !important;
+        transition: all 0.3s ease !important;
+        border-bottom: 2px solid transparent !important;
+    }
+    
     .stTabs [data-baseweb="tab-list"] button:hover {
-        background-color: rgba(255, 107, 107, 0.2);
-        color: #FF6B6B;
+        background-color: rgba(255, 107, 107, 0.15) !important;
+        color: #FF6B6B !important;
+        border-bottom: 2px solid #FF6B6B !important;
+    }
+    
+    .stTabs [aria-selected="true"] {
+        background-color: rgba(255, 107, 107, 0.2) !important;
+        color: #FF6B6B !important;
+        border-bottom: 2px solid #FF6B6B !important;
+    }
+    
+    /* ===== SIDEBAR STYLING ===== */
+    [data-testid="stSidebar"] {
+        background: linear-gradient(180deg, rgba(10, 14, 39, 0.95) 0%, rgba(26, 31, 58, 0.95) 100%) !important;
+        border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+        backdrop-filter: blur(10px);
+    }
+    
+    /* ===== ALERT BOXES ===== */
+    .alert-high-risk {
+        background: linear-gradient(135deg, rgba(255, 107, 107, 0.25) 0%, rgba(255, 107, 107, 0.15) 100%);
+        border: 2px solid rgba(255, 107, 107, 0.4);
+        border-radius: 14px;
+        padding: 20px;
+        color: #FFB3B3;
+        font-weight: 500;
+        animation: pulse 2s infinite;
+    }
+    
+    .alert-low-risk {
+        background: linear-gradient(135deg, rgba(78, 205, 196, 0.25) 0%, rgba(78, 205, 196, 0.15) 100%);
+        border: 2px solid rgba(78, 205, 196, 0.4);
+        border-radius: 14px;
+        padding: 20px;
+        color: #A8F0ED;
+        font-weight: 500;
+    }
+    
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.8; }
+    }
+    
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    .fade-in {
+        animation: fadeIn 0.6s ease-in;
+    }
+    
+    /* ===== INSIGHT BADGES ===== */
+    .insight-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, rgba(255, 217, 61, 0.2) 0%, rgba(255, 217, 61, 0.1) 100%);
+        border: 1px solid rgba(255, 217, 61, 0.3);
+        border-radius: 12px;
+        padding: 8px 16px;
+        color: #FFD93D;
+        font-weight: 600;
+        font-size: 0.9em;
+        margin: 4px 4px 4px 0;
+    }
+    
+    /* ===== DIVIDER ===== */
+    .divider-premium {
+        height: 1px;
+        background: linear-gradient(90deg, 
+            rgba(255, 255, 255, 0) 0%, 
+            rgba(255, 255, 255, 0.2) 50%, 
+            rgba(255, 255, 255, 0) 100%);
+        margin: 30px 0;
+    }
+    
+    /* ===== FEATURE IMPORTANCE ===== */
+    .feature-bar-container {
+        margin: 12px 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .feature-name {
+        font-weight: 600;
+        color: #E8E8E8;
+        min-width: 180px;
+        font-size: 0.95em;
+    }
+    
+    .feature-bar {
+        flex: 1;
+        height: 8px;
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 8px;
+        overflow: hidden;
+        position: relative;
+    }
+    
+    .feature-bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #FF6B6B, #FFD93D, #4ECDC4);
+        border-radius: 8px;
+        transition: width 0.6s ease;
+        box-shadow: 0 0 8px rgba(255, 107, 107, 0.4);
     }
     
     .metric-card {
-        background: linear-gradient(135deg, #1A1F2E 0%, #252D3D 100%);
-        border-left: 4px solid #FF6B6B;
-        padding: 20px;
+        background: linear-gradient(135deg, rgba(255, 107, 107, 0.1) 0%, rgba(255, 107, 107, 0.05) 100%);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 107, 107, 0.2);
         border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        padding: 20px;
+        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.1);
+        transition: all 0.3s ease;
     }
     
-    .header-title {
-        font-size: 2.5em;
-        font-weight: 800;
-        background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin-bottom: 10px;
+    .metric-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 25px rgba(255, 107, 107, 0.2);
     }
     
-    .subtitle {
-        font-size: 1.1em;
-        color: #A0A0A0;
-        margin-bottom: 20px;
+    .insight-box {
+        background: linear-gradient(135deg, rgba(255, 217, 61, 0.1) 0%, rgba(255, 217, 61, 0.05) 100%);
+        border-left: 3px solid #FFD93D;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 10px 0;
+        color: #E8E8E8;
+    }
+    
+    .chart-container {
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 12px;
+        padding: 15px;
+        margin: 15px 0;
+        border: 1px solid rgba(255, 255, 255, 0.1);
     }
     
     .risk-high {
@@ -91,22 +382,6 @@ st.markdown("""
         border-radius: 8px;
     }
     
-    .insight-box {
-        background: rgba(255, 217, 61, 0.1);
-        border-left: 4px solid #FFD93D;
-        padding: 15px;
-        border-radius: 8px;
-        margin: 10px 0;
-        color: #E8E8E8;
-    }
-    
-    .chart-container {
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 12px;
-        padding: 15px;
-        margin: 15px 0;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -118,7 +393,6 @@ MODEL_DIR = BASE_DIR / "models"
 # Available models
 AVAILABLE_MODELS = {
     'logistic': {'path': MODEL_DIR / "logistic_model.joblib", 'scaler': MODEL_DIR / "logistic_scaler.joblib"},
-    'svm': {'path': MODEL_DIR / "svm_model.joblib", 'scaler': MODEL_DIR / "svm_scaler.joblib"},
     'random_forest': {'path': MODEL_DIR / "random_forest_model.joblib", 'scaler': None},
     'decision_tree': {'path': MODEL_DIR / "decision_tree_model.joblib", 'scaler': None},
     'xgboost': {'path': MODEL_DIR / "xgboost_model.joblib", 'scaler': None},
@@ -197,9 +471,9 @@ with st.sidebar:
 
 # ======================== MAIN HEADER ========================
 st.markdown("""
-    <div style='text-align: center; margin: 30px 0 40px 0;'>
-        <h1 class='header-title'>🎓 Faculty Workload Risk Prediction</h1>
-        <p class='subtitle'>AI-Powered System for Identifying Faculty Overload Risk</p>
+    <div style='text-align: center; margin: 40px 0 50px 0; padding: 30px; background: linear-gradient(135deg, rgba(255, 107, 107, 0.08) 0%, rgba(78, 205, 196, 0.08) 100%); backdrop-filter: blur(10px); border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1);'>
+        <h1 class='title-premium'>🎓 Faculty Workload Intelligence Platform</h1>
+        <p class='subtitle-premium'>✨ AI-Powered Predictive Analytics for Faculty Workload Risk Assessment</p>
     </div>
 """, unsafe_allow_html=True)
 
@@ -210,40 +484,40 @@ if selected == "🏠 Dashboard":
     
     with col1:
         st.markdown("""
-            <div class='metric-card'>
-                <div style='font-size: 2.5em;'>👥</div>
-                <div style='font-size: 0.9em; color: #A0A0A0;'>Total Faculty</div>
-                <div style='font-size: 2em; font-weight: 800; color: #FF6B6B;'>""" + str(len(df)) + """</div>
+            <div class='metric-card-premium'>
+                <div style='font-size: 2.8em; margin-bottom: 12px;'>👥</div>
+                <div style='font-size: 0.85em; color: #B0B0B0; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;'>Total Faculty</div>
+                <div style='font-size: 2.4em; font-weight: 800; color: #FF6B6B; margin-top: 10px;'>""" + str(len(df)) + """</div>
             </div>
         """, unsafe_allow_html=True)
     
     with col2:
         high_risk = int(df['workload_risk'].sum())
         st.markdown(f"""
-            <div class='metric-card'>
-                <div style='font-size: 2.5em;'>⚠️</div>
-                <div style='font-size: 0.9em; color: #A0A0A0;'>High Risk</div>
-                <div style='font-size: 2em; font-weight: 800; color: #FF6B6B;'>{high_risk}</div>
+            <div class='metric-card-premium' style='background: linear-gradient(135deg, rgba(255, 107, 107, 0.15) 0%, rgba(255, 107, 107, 0.08) 100%); border: 1px solid rgba(255, 107, 107, 0.3);'>
+                <div style='font-size: 2.8em; margin-bottom: 12px;'>⚠️</div>
+                <div style='font-size: 0.85em; color: #FFB3B3; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;'>High Risk <span style='font-size: 0.7em;'>(🔴)</span></div>
+                <div style='font-size: 2.4em; font-weight: 800; color: #FF6B6B; margin-top: 10px;'>{high_risk}</div>
             </div>
         """, unsafe_allow_html=True)
     
     with col3:
         low_risk = int((df['workload_risk'] == 0).sum())
         st.markdown(f"""
-            <div class='metric-card'>
-                <div style='font-size: 2.5em;'>✅</div>
-                <div style='font-size: 0.9em; color: #A0A0A0;'>Low Risk</div>
-                <div style='font-size: 2em; font-weight: 800; color: #4ECDC4;'>{low_risk}</div>
+            <div class='metric-card-success'>
+                <div style='font-size: 2.8em; margin-bottom: 12px;'>✅</div>
+                <div style='font-size: 0.85em; color: #A8F0ED; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;'>Low Risk <span style='font-size: 0.7em;'>(✓)</span></div>
+                <div style='font-size: 2.4em; font-weight: 800; color: #4ECDC4; margin-top: 10px;'>{low_risk}</div>
             </div>
         """, unsafe_allow_html=True)
     
     with col4:
         risk_percentage = round((high_risk / len(df)) * 100, 1)
         st.markdown(f"""
-            <div class='metric-card'>
-                <div style='font-size: 2.5em;'>📊</div>
-                <div style='font-size: 0.9em; color: #A0A0A0;'>Risk Rate</div>
-                <div style='font-size: 2em; font-weight: 800; color: #FFD93D;'>{risk_percentage}%</div>
+            <div class='metric-card-warning'>
+                <div style='font-size: 2.8em; margin-bottom: 12px;'>📊</div>
+                <div style='font-size: 0.85em; color: #FFE899; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;'>Overall Risk Rate</div>
+                <div style='font-size: 2.4em; font-weight: 800; color: #FFD93D; margin-top: 10px;'>{risk_percentage}%</div>
             </div>
         """, unsafe_allow_html=True)
     
@@ -253,8 +527,8 @@ if selected == "🏠 Dashboard":
     col1, col2 = st.columns(2)
     
     with col1:
-        st.markdown("<div class='chart-container'>", unsafe_allow_html=True)
-        st.subheader("📊 Risk Distribution")
+        st.markdown("<div class='chart-wrapper' style='animation: fadeIn 0.6s ease;'>", unsafe_allow_html=True)
+        st.markdown("<div class='section-title'>📊 Risk Distribution</div>", unsafe_allow_html=True)
         fig_pie = px.pie(
             values=[low_risk, high_risk],
             names=['Low Risk', 'High Risk'],
@@ -264,15 +538,15 @@ if selected == "🏠 Dashboard":
         fig_pie.update_layout(
             plot_bgcolor='rgba(0,0,0,0)',
             paper_bgcolor='rgba(0,0,0,0)',
-            font=dict(color='#E8E8E8'),
+            font=dict(color='#E8E8E8', family='Poppins'),
             height=400
         )
         st.plotly_chart(fig_pie, use_container_width=True, config={'displayModeBar': False})
         st.markdown("</div>", unsafe_allow_html=True)
     
     with col2:
-        st.markdown("<div class='chart-container'>", unsafe_allow_html=True)
-        st.subheader("📈 Risk by Experience Level")
+        st.markdown("<div class='chart-wrapper' style='animation: fadeIn 0.7s ease;'>", unsafe_allow_html=True)
+        st.markdown("<div class='section-title'>📈 Risk by Experience Level</div>", unsafe_allow_html=True)
         experience_risk = df.groupby(pd.cut(df['years_of_experience'], bins=5))['workload_risk'].mean()
         fig_exp = px.bar(
             x=[f"{int(x.left)}-{int(x.right)}" for x in experience_risk.index],
@@ -293,7 +567,7 @@ if selected == "🏠 Dashboard":
     
     # Key Insights
     st.markdown("<br>", unsafe_allow_html=True)
-    st.subheader("💡 Key Insights & Statistics")
+    st.markdown("<div class='section-title'>💡 Key Insights & Statistics</div>", unsafe_allow_html=True)
     
     col1, col2 = st.columns(2)
     
@@ -664,15 +938,13 @@ elif selected == "🔮 Prediction":
     with model_col1:
         selected_model_name = st.selectbox(
             "Choose Model:",
-            ['Logistic Regression', 'SVM', 'Random Forest', 'Decision Tree', 'XGBoost'],
+            ['Logistic Regression', 'Random Forest', 'Decision Tree', 'XGBoost'],
             help="Different models may give different predictions"
         )
         
         model_key = selected_model_name.lower().replace(' ', '_')
         if 'logistic' in model_key:
             model_key = 'logistic'
-        elif 'svm' in model_key:
-            model_key = 'svm'
         elif 'random' in model_key:
             model_key = 'random_forest'
         elif 'decision' in model_key:
@@ -1111,7 +1383,7 @@ elif selected == "🔮 Prediction":
         st.subheader("🎯 All Models Predictions")
         
         all_predictions = []
-        for model_name in ['logistic', 'svm', 'random_forest', 'decision_tree', 'xgboost']:
+        for model_name in ['logistic', 'random_forest', 'decision_tree', 'xgboost']:
             try:
                 m, s = load_model(model_name)
                 if s:
