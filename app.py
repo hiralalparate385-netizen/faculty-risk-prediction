@@ -614,7 +614,7 @@ if selected == "🏠 Dashboard":
     tab1, tab2, tab3 = st.tabs(["📊 Detailed Breakdown", "🎯 Risk Factors", "💼 Experience Impact"])
     
     with tab1:
-        st.markdown("<div class='chart-container'>", unsafe_allow_html=True)
+        st.markdown("<div class='chart-wrapper' style='animation: fadeIn 0.6s ease;'>", unsafe_allow_html=True)
         col1, col2 = st.columns(2)
         
         with col1:
@@ -658,7 +658,7 @@ if selected == "🏠 Dashboard":
         st.markdown("</div>", unsafe_allow_html=True)
     
     with tab2:
-        st.markdown("<div class='chart-container'>", unsafe_allow_html=True)
+        st.markdown("<div class='chart-wrapper' style='animation: fadeIn 0.7s ease;'>", unsafe_allow_html=True)
         
         # Identify key risk factors
         col1, col2 = st.columns(2)
@@ -712,7 +712,7 @@ if selected == "🏠 Dashboard":
         st.markdown("</div>", unsafe_allow_html=True)
     
     with tab3:
-        st.markdown("<div class='chart-container'>", unsafe_allow_html=True)
+        st.markdown("<div class='chart-wrapper' style='animation: fadeIn 0.8s ease;'>", unsafe_allow_html=True)
         
         # Experience vs workload
         col1, col2 = st.columns(2)
@@ -833,7 +833,7 @@ elif selected == "📊 Analytics":
         st.markdown("</div>", unsafe_allow_html=True)
     
     with tab2:
-        st.markdown("<div class='chart-container'>", unsafe_allow_html=True)
+        st.markdown("<div class='chart-wrapper' style='animation: fadeIn 0.6s ease;'>", unsafe_allow_html=True)
         corr_matrix = df.corr(numeric_only=True)
         fig_corr = px.imshow(
             corr_matrix,
@@ -852,7 +852,7 @@ elif selected == "📊 Analytics":
         st.markdown("</div>", unsafe_allow_html=True)
     
     with tab3:
-        st.markdown("<div class='chart-container'>", unsafe_allow_html=True)
+        st.markdown("<div class='chart-wrapper' style='animation: fadeIn 0.7s ease;'>", unsafe_allow_html=True)
         numeric_features = df.select_dtypes(include=[np.number]).columns
         selected_features = st.multiselect("Select Features to Compare", numeric_features, default=['courses_assigned', 'weekly_teaching_hours', 'total_students_handled'])
         
@@ -878,7 +878,7 @@ elif selected == "📊 Analytics":
         st.markdown("</div>", unsafe_allow_html=True)
     
     with tab4:
-        st.markdown("<div class='chart-container'>", unsafe_allow_html=True)
+        st.markdown("<div class='chart-wrapper' style='animation: fadeIn 0.8s ease;'>", unsafe_allow_html=True)
         col1, col2 = st.columns(2)
         
         with col1:
@@ -989,7 +989,7 @@ elif selected == "🔮 Prediction":
     col1, col2 = st.columns([1.2, 1.8])
     
     with col1:
-        st.markdown("### 📋 Faculty Profile")
+        st.markdown("<div class='section-title' style='font-size: 1.25em; margin-bottom: 20px;'>📋 Faculty Profile</div>", unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
         
         # Use compact number inputs with columns for space efficiency
@@ -1069,7 +1069,7 @@ elif selected == "🔮 Prediction":
         """, unsafe_allow_html=True)
     
     with col2:
-        st.markdown("### 📊 Comparative Analysis")
+        st.markdown("<div class='section-title' style='font-size: 1.25em; margin-bottom: 20px;'>📊 Comparative Analysis</div>", unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
         
         # Compare with dataset averages
@@ -1232,7 +1232,7 @@ elif selected == "🔮 Prediction":
         
         # Detailed Analysis
         st.markdown("<br>", unsafe_allow_html=True)
-        st.subheader("📊 Detailed Risk Analysis")
+        st.markdown("<div class='section-title' style='font-size: 1.25em; margin-bottom: 20px;'>📊 Detailed Risk Analysis</div>", unsafe_allow_html=True)
         
         # Calculate risk metrics
         risk_score = prob * 100
@@ -1288,7 +1288,7 @@ elif selected == "🔮 Prediction":
         
         # Recommendations
         st.markdown("<br>", unsafe_allow_html=True)
-        st.subheader("💡 Personalized Recommendations")
+        st.markdown("<div class='section-title' style='font-size: 1.25em; margin-bottom: 20px;'>💡 Personalized Recommendations</div>", unsafe_allow_html=True)
         
         recommendations = []
         
@@ -1330,7 +1330,7 @@ elif selected == "🔮 Prediction":
         
         # Comparative insights
         st.markdown("<br>", unsafe_allow_html=True)
-        st.subheader("📈 Comparative Insights")
+        st.markdown("<div class='section-title' style='font-size: 1.25em; margin-bottom: 20px;'>📈 Comparative Insights</div>", unsafe_allow_html=True)
         
         # Find similar faculty from dataset
         similar_faculty = df[
@@ -1380,7 +1380,7 @@ elif selected == "🔮 Prediction":
         
         # All Models Predictions Comparison
         st.markdown("<br>", unsafe_allow_html=True)
-        st.subheader("🎯 All Models Predictions")
+        st.markdown("<div class='section-title' style='font-size: 1.25em; margin-bottom: 20px;'>🎯 All Models Predictions</div>", unsafe_allow_html=True)
         
         all_predictions = []
         for model_name in ['logistic', 'random_forest', 'decision_tree', 'xgboost']:
@@ -1516,7 +1516,7 @@ elif selected == "📈 Model Comparison":
             
             # Detailed table
             st.markdown("<br>", unsafe_allow_html=True)
-            st.subheader("📊 Detailed Metrics Table")
+            st.markdown("<div class='section-title' style='font-size: 1.1em; margin-bottom: 15px;'>📊 Detailed Metrics Table</div>", unsafe_allow_html=True)
             
             # Format for better display
             display_df = comparison_df.copy()
@@ -1527,7 +1527,7 @@ elif selected == "📈 Model Comparison":
             
             # Model details
             st.markdown("<br>", unsafe_allow_html=True)
-            st.subheader("🔍 Model Details")
+            st.markdown("<div class='section-title' style='font-size: 1.1em; margin-bottom: 15px;'>🔍 Model Details</div>", unsafe_allow_html=True)
             
             selected_model = st.selectbox("Select Model for Details", comparison_df['Model'].tolist())
             model_key = selected_model.lower()
@@ -1643,7 +1643,7 @@ elif selected == "ℹ️ About":
     
     st.markdown("<br>", unsafe_allow_html=True)
     
-    st.subheader("📈 System Statistics")
+    st.markdown("<div class='section-title'>📈 System Statistics</div>", unsafe_allow_html=True)
     
     col1, col2, col3, col4 = st.columns(4)
     
