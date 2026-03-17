@@ -779,12 +779,12 @@ if selected == "🏠 Dashboard":
 
 # ======================== ANALYTICS ========================
 elif selected == "📊 Analytics":
-    st.subheader("🔬 Exploratory Data Analysis")
+    st.markdown("<div class='section-title'>🔬 Exploratory Data Analysis</div>", unsafe_allow_html=True)
     
     tab1, tab2, tab3, tab4 = st.tabs(["📊 Features", "🔗 Correlations", "📈 Trends", "🎯 Risk Analysis"])
     
     with tab1:
-        st.markdown("<div class='chart-container'>", unsafe_allow_html=True)
+        st.markdown("<div class='chart-wrapper' style='animation: fadeIn 0.6s ease;'>", unsafe_allow_html=True)
         feature = st.selectbox("Select Feature for Analysis", [
             'courses_assigned',
             'weekly_teaching_hours',
@@ -923,16 +923,16 @@ elif selected == "📊 Analytics":
 
 # ======================== PREDICTION ========================
 elif selected == "🔮 Prediction":
-    st.subheader("🤖 Faculty Workload Risk Prediction Engine")
+    st.markdown("<div class='section-title'>🤖 Faculty Workload Risk Prediction Engine</div>", unsafe_allow_html=True)
     
     st.markdown("""
-        <div class='insight-box'>
+        <div class='insight-box' style='border-left: 4px solid #FFD93D; background: linear-gradient(135deg, rgba(255, 217, 61, 0.15) 0%, rgba(255, 217, 61, 0.08) 100%);'>
             <strong>💡 How it works:</strong> Enter faculty details below to predict workload risk with our advanced AI model.
         </div>
     """, unsafe_allow_html=True)
     
     # Model Selection
-    st.markdown("### 🤖 Select Prediction Model")
+    st.markdown("<div class='section-title' style='font-size: 1.25em; margin-top: 30px;'>🤖 Select Prediction Model</div>", unsafe_allow_html=True)
     model_col1, model_col2, model_col3 = st.columns(3)
     
     with model_col1:
@@ -1446,10 +1446,10 @@ elif selected == "🔮 Prediction":
 
 # ======================== MODEL COMPARISON ========================
 elif selected == "📈 Model Comparison":
-    st.subheader("🏆 Machine Learning Model Performance Comparison")
+    st.markdown("<div class='section-title'>🏆 Machine Learning Model Performance Comparison</div>", unsafe_allow_html=True)
     
     if models_metadata:
-        st.markdown("<div class='chart-container'>", unsafe_allow_html=True)
+        st.markdown("<div class='chart-wrapper' style='animation: fadeIn 0.6s ease;'>", unsafe_allow_html=True)
         
         # Create comparison data
         comparison_data = []
@@ -1486,7 +1486,7 @@ elif selected == "📈 Model Comparison":
                     title="Performance Metrics Comparison",
                     plot_bgcolor='rgba(0,0,0,0)',
                     paper_bgcolor='rgba(0,0,0,0)',
-                    font=dict(color='#E8E8E8'),
+                    font=dict(color='#E8E8E8', family='Poppins'),
                     height=400,
                     hovermode='x unified'
                 )
@@ -1581,15 +1581,15 @@ elif selected == "📈 Model Comparison":
 
 # ======================== ABOUT ========================
 elif selected == "ℹ️ About":
-    st.subheader("ℹ️ About FacultyAI")
+    st.markdown("<div class='section-title'>ℹ️ About FacultyAI</div>", unsafe_allow_html=True)
     
     col1, col2 = st.columns([2, 1])
     
     with col1:
         st.markdown("""
-            <div class='insight-box'>
-                <h3>🎓 Faculty Workload Risk Prediction System</h3>
-                <p>
+            <div class='insight-box' style='border-left: 4px solid #4ECDC4; background: linear-gradient(135deg, rgba(78, 205, 196, 0.15) 0%, rgba(78, 205, 196, 0.08) 100%);'>
+                <h3 style='color: #4ECDC4; font-family: Poppins;'>🎓 Faculty Workload Intelligence Platform</h3>
+                <p style='color: #E8E8E8; line-height: 1.6;'>
                     FacultyAI is an intelligent system designed to predict and identify faculty members at risk 
                     of workload overload. By analyzing multiple factors including course load, teaching hours, 
                     student count, and administrative responsibilities, our AI models provide actionable insights 
@@ -1601,9 +1601,9 @@ elif selected == "ℹ️ About":
         st.markdown("<br>", unsafe_allow_html=True)
         
         st.markdown("""
-            <div class='insight-box'>
-                <h3>📊 Key Metrics Analyzed</h3>
-                <ul>
+            <div class='insight-box' style='border-left: 4px solid #FF6B6B; background: linear-gradient(135deg, rgba(255, 107, 107, 0.15) 0%, rgba(255, 107, 107, 0.08) 100%);'>
+                <h3 style='color: #FF6B6B; font-family: Poppins;'>📊 Key Metrics Analyzed</h3>
+                <ul style='color: #E8E8E8; line-height: 1.8;'>
                     <li><strong>Courses Assigned:</strong> Number of courses taught</li>
                     <li><strong>Weekly Teaching Hours:</strong> Total hours spent teaching</li>
                     <li><strong>Total Students:</strong> Number of students taught</li>
@@ -1617,7 +1617,7 @@ elif selected == "ℹ️ About":
         st.markdown("<br>", unsafe_allow_html=True)
         
         st.markdown("""
-            <div class='insight-box'>
+            <div class='insight-box' style='border-left: 4px solid #FFD93D;'>
                 <h3>🤖 AI Models Used</h3>
                 <p>
                     Our system employs multiple machine learning models including Logistic Regression, 
