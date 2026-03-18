@@ -325,7 +325,222 @@ st.markdown("""
         animation: fadeIn 0.6s ease-in;
     }
     
-    /* ===== INSIGHT BADGES ===== */
+    /* ===== NEW CREATIVE ANIMATIONS ===== */
+    
+    /* Floating Animation */
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-12px); }
+    }
+    
+    .float-element {
+        animation: float 3s ease-in-out infinite;
+    }
+    
+    /* Glowing Underline */
+    @keyframes glowUnderline {
+        0%, 100% { box-shadow: 0 0 5px rgba(255, 107, 107, 0.5), 0 0 10px rgba(255, 107, 107, 0.3); }
+        50% { box-shadow: 0 0 10px rgba(255, 107, 107, 0.8), 0 0 20px rgba(255, 107, 107, 0.5); }
+    }
+    
+    .section-title::after {
+        content: '';
+        display: block;
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, #FF6B6B 0%, #4ECDC4 50%, #FFD93D 100%);
+        border-radius: 2px;
+        margin-top: 12px;
+        animation: glowUnderline 2.5s ease-in-out infinite;
+    }
+    
+    /* Neon Glow Effect */
+    @keyframes neonGlow {
+        0%, 100% { 
+            text-shadow: 0 0 10px rgba(255, 107, 107, 0.5),
+                         0 0 20px rgba(255, 107, 107, 0.3);
+        }
+        50% { 
+            text-shadow: 0 0 20px rgba(255, 107, 107, 0.8),
+                         0 0 40px rgba(255, 107, 107, 0.5),
+                         0 0 60px rgba(255, 107, 107, 0.3);
+        }
+    }
+    
+    /* Rainbow Gradient Text */
+    .rainbow-text {
+        background: linear-gradient(90deg, #FF6B6B, #FFD93D, #4ECDC4, #FF6B6B);
+        background-size: 300% 300%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: gradientShift 3s ease infinite;
+    }
+    
+    @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    
+    /* Bounce Animation */
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+    }
+    
+    .bounce-element {
+        animation: bounce 1.5s ease-in-out infinite;
+    }
+    
+    /* Rotate Animation */
+    @keyframes rotateIcon {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    .rotate-element {
+        animation: rotateIcon 3s linear infinite;
+    }
+    
+    /* Shimmer Wave */
+    @keyframes shimmer {
+        0% { background-position: -1000px 0; }
+        100% { background-position: 1000px 0; }
+    }
+    
+    .shimmer-effect {
+        background: linear-gradient(90deg, 
+            rgba(255, 255, 255, 0) 0%, 
+            rgba(255, 255, 255, 0.15) 50%, 
+            rgba(255, 255, 255, 0) 100%);
+        background-size: 1000px 100%;
+        animation: shimmer 2s infinite;
+    }
+    
+    /* Counter Animation */
+    @keyframes countUp {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    /* Status Badges */
+    .badge-excellent {
+        display: inline-block;
+        background: linear-gradient(135deg, #4ECDC4, #45B7AA);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.8em;
+        font-weight: 700;
+        margin-left: 8px;
+        box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
+    }
+    
+    .badge-good {
+        display: inline-block;
+        background: linear-gradient(135deg, #FFD93D, #F7C441);
+        color: #1a1f3a;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.8em;
+        font-weight: 700;
+        margin-left: 8px;
+        box-shadow: 0 4px 15px rgba(255, 217, 61, 0.3);
+    }
+    
+    .badge-warning {
+        display: inline-block;
+        background: linear-gradient(135deg, #FF6B6B, #FF5252);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.8em;
+        font-weight: 700;
+        margin-left: 8px;
+        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        animation: pulse 2s infinite;
+    }
+    
+    /* Progress Bar Animation */
+    @keyframes fillProgress {
+        from { width: 0%; }
+        to { width: var(--progress-value); }
+    }
+    
+    .progress-bar {
+        height: 6px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 3px;
+        overflow: hidden;
+        margin-top: 8px;
+    }
+    
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #FF6B6B, #4ECDC4, #FFD93D);
+        border-radius: 3px;
+        animation: fillProgress 1.5s ease-out forwards;
+    }
+    
+    /* Hover Tooltip */
+    .tooltip-container {
+        position: relative;
+        display: inline-block;
+        cursor: help;
+        border-bottom: 1px dotted rgba(255, 255, 255, 0.3);
+    }
+    
+    .tooltip-text {
+        visibility: hidden;
+        background-color: rgba(0, 0, 0, 0.8);
+        color: #FFD93D;
+        text-align: center;
+        border-radius: 8px;
+        padding: 8px 12px;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        margin-left: -60px;
+        opacity: 0;
+        transition: opacity 0.3s;
+        font-size: 0.85em;
+        white-space: nowrap;
+        border: 1px solid rgba(255, 217, 61, 0.3);
+    }
+    
+    .tooltip-container:hover .tooltip-text {
+        visibility: visible;
+        opacity: 1;
+    }
+    
+    /* Card Float Effect */
+    .card-float {
+        animation: float 4s ease-in-out infinite;
+    }
+    
+    /* Glow on Hover */
+    .glow-hover:hover {
+        box-shadow: 0 0 30px rgba(255, 107, 107, 0.6),
+                    0 0 60px rgba(255, 107, 107, 0.3) !important;
+        filter: brightness(1.1);
+    }
+    
+    /* Text Animation */
+    @keyframes typeWriter {
+        from { width: 0; }
+        to { width: 100%; }
+    }
+    
+    .typewriter {
+        overflow: hidden;
+        border-right: 3px solid #4ECDC4;
+        white-space: nowrap;
+        animation: typeWriter 2s steps(40, end);
+    }
+    
+    /* Insight BADGES ===== */
     .insight-badge {
         display: inline-block;
         background: linear-gradient(135deg, rgba(255, 217, 61, 0.2) 0%, rgba(255, 217, 61, 0.1) 100%);
@@ -521,9 +736,16 @@ with st.sidebar:
 
 # ======================== MAIN HEADER ========================
 st.markdown("""
-    <div style='text-align: center; margin: 40px 0 50px 0; padding: 30px; background: linear-gradient(135deg, rgba(255, 107, 107, 0.08) 0%, rgba(78, 205, 196, 0.08) 100%); backdrop-filter: blur(10px); border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1);'>
-        <h1 class='title-premium'>🎓 Faculty Workload Intelligence Platform</h1>
-        <p class='subtitle-premium'>✨ AI-Powered Predictive Analytics for Faculty Workload Risk Assessment</p>
+    <div style='text-align: center; margin: 40px 0 50px 0; padding: 30px; background: linear-gradient(135deg, rgba(255, 107, 107, 0.08) 0%, rgba(78, 205, 196, 0.08) 100%); backdrop-filter: blur(10px); border-radius: 20px; border: 2px solid rgba(255, 107, 107, 0.2); box-shadow: 0 0 30px rgba(255, 107, 107, 0.2); animation: fadeIn 0.8s ease;'>
+        <h1 class='title-premium' style='animation: neonGlow 2s ease-in-out infinite;'>✨ 🎓 Faculty Workload Intelligence Platform ✨</h1>
+        <p class='subtitle-premium' style='margin-top: 15px; font-size: 1.2em;'>🚀 AI-Powered Predictive Analytics for Faculty Workload Risk Assessment</p>
+        <div style='margin-top: 15px; font-size: 0.9em; color: #4ECDC4; letter-spacing: 1px;'>
+            <span class='tooltip-container'>
+                <strong>Status:</strong> 
+                <span class='tooltip-text'>Real-time monitoring and predictive analysis active</span>
+                🟢 LIVE
+            </span>
+        </div>
     </div>
 """, unsafe_allow_html=True)
 
@@ -534,40 +756,63 @@ if selected == "🏠 Dashboard":
     
     with col1:
         st.markdown("""
-            <div class='metric-card-premium'>
-                <div style='font-size: 2.8em; margin-bottom: 12px;'>👥</div>
+            <div class='metric-card-premium glow-hover card-float'>
+                <div style='font-size: 2.8em; margin-bottom: 12px; animation: float 3s ease-in-out infinite;'>👥</div>
                 <div style='font-size: 0.85em; color: #B0B0B0; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;'>Total Faculty</div>
-                <div style='font-size: 2.4em; font-weight: 800; color: #FF6B6B; margin-top: 10px;'>""" + str(len(df)) + """</div>
+                <div style='font-size: 2.4em; font-weight: 800; color: #FF6B6B; margin-top: 10px; background: linear-gradient(90deg, #FF6B6B, #FFD93D, #4ECDC4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;'>""" + str(len(df)) + """</div>
+                <div style='margin-top: 12px;'>
+                    <div class='progress-bar'>
+                        <div class='progress-fill' style='--progress-value: 100%;'></div>
+                    </div>
+                </div>
             </div>
         """, unsafe_allow_html=True)
     
     with col2:
         high_risk = int(df['workload_risk'].sum())
+        risk_badge = "badge-warning" if high_risk > 20 else "badge-good"
         st.markdown(f"""
-            <div class='metric-card-premium' style='background: linear-gradient(135deg, rgba(255, 107, 107, 0.15) 0%, rgba(255, 107, 107, 0.08) 100%); border: 1px solid rgba(255, 107, 107, 0.3);'>
-                <div style='font-size: 2.8em; margin-bottom: 12px;'>⚠️</div>
-                <div style='font-size: 0.85em; color: #FFB3B3; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;'>High Risk <span style='font-size: 0.7em;'>(🔴)</span></div>
-                <div style='font-size: 2.4em; font-weight: 800; color: #FF6B6B; margin-top: 10px;'>{high_risk}</div>
+            <div class='metric-card-premium glow-hover card-float' style='background: linear-gradient(135deg, rgba(255, 107, 107, 0.15) 0%, rgba(255, 107, 107, 0.08) 100%); border: 1px solid rgba(255, 107, 107, 0.3); animation-delay: 0.2s;'>
+                <div style='font-size: 2.8em; margin-bottom: 12px; animation: float 3s ease-in-out infinite; animation-delay: 0.2s;'>⚠️</div>
+                <div style='font-size: 0.85em; color: #FFB3B3; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;'>High Risk <span class='{risk_badge}' style='margin: 0;'>🔴</span></div>
+                <div style='font-size: 2.4em; font-weight: 800; color: #FF6B6B; margin-top: 10px; background: linear-gradient(90deg, #FF6B6B, #FFD93D); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;'>{high_risk}</div>
+                <div style='margin-top: 12px;'>
+                    <div class='progress-bar'>
+                        <div class='progress-fill' style='--progress-value: {(high_risk/len(df)*100):.1f}%;'></div>
+                    </div>
+                </div>
             </div>
         """, unsafe_allow_html=True)
     
     with col3:
         low_risk = int((df['workload_risk'] == 0).sum())
+        low_badge = "badge-excellent" if low_risk > 80 else "badge-good"
         st.markdown(f"""
-            <div class='metric-card-success'>
-                <div style='font-size: 2.8em; margin-bottom: 12px;'>✅</div>
-                <div style='font-size: 0.85em; color: #A8F0ED; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;'>Low Risk <span style='font-size: 0.7em;'>(✓)</span></div>
-                <div style='font-size: 2.4em; font-weight: 800; color: #4ECDC4; margin-top: 10px;'>{low_risk}</div>
+            <div class='metric-card-success glow-hover card-float' style='animation-delay: 0.4s;'>
+                <div style='font-size: 2.8em; margin-bottom: 12px; animation: float 3s ease-in-out infinite; animation-delay: 0.4s;'>✅</div>
+                <div style='font-size: 0.85em; color: #A8F0ED; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;'>Low Risk <span class='{low_badge}' style='margin: 0;'>✓</span></div>
+                <div style='font-size: 2.4em; font-weight: 800; color: #4ECDC4; margin-top: 10px; background: linear-gradient(90deg, #4ECDC4, #45B7AA); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;'>{low_risk}</div>
+                <div style='margin-top: 12px;'>
+                    <div class='progress-bar'>
+                        <div class='progress-fill' style='--progress-value: {(low_risk/len(df)*100):.1f}%;'></div>
+                    </div>
+                </div>
             </div>
         """, unsafe_allow_html=True)
     
     with col4:
         risk_percentage = round((high_risk / len(df)) * 100, 1)
+        status_badge = "badge-excellent" if risk_percentage < 10 else ("badge-good" if risk_percentage < 30 else "badge-warning")
         st.markdown(f"""
-            <div class='metric-card-warning'>
-                <div style='font-size: 2.8em; margin-bottom: 12px;'>📊</div>
-                <div style='font-size: 0.85em; color: #FFE899; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;'>Overall Risk Rate</div>
-                <div style='font-size: 2.4em; font-weight: 800; color: #FFD93D; margin-top: 10px;'>{risk_percentage}%</div>
+            <div class='metric-card-warning glow-hover card-float' style='animation-delay: 0.6s;'>
+                <div style='font-size: 2.8em; margin-bottom: 12px; animation: float 3s ease-in-out infinite; animation-delay: 0.6s;'>📊</div>
+                <div style='font-size: 0.85em; color: #FFE899; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;'>Risk Rate <span class='{status_badge}' style='margin: 0;'>📈</span></div>
+                <div style='font-size: 2.4em; font-weight: 800; color: #FFD93D; margin-top: 10px; background: linear-gradient(90deg, #FFD93D, #F7C441); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;'>{risk_percentage}%</div>
+                <div style='margin-top: 12px;'>
+                    <div class='progress-bar'>
+                        <div class='progress-fill' style='--progress-value: {risk_percentage}%;'></div>
+                    </div>
+                </div>
             </div>
         """, unsafe_allow_html=True)
     
