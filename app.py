@@ -91,12 +91,30 @@ st.markdown("""
     
     .metric-card-success {
         background: linear-gradient(135deg, rgba(78, 205, 196, 0.1) 0%, rgba(78, 205, 196, 0.05) 100%);
+        backdrop-filter: blur(20px);
         border: 1px solid rgba(78, 205, 196, 0.2);
+        border-radius: 16px;
+        padding: 28px;
         box-shadow: 0 8px 32px rgba(78, 205, 196, 0.1);
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         cursor: pointer;
         position: relative;
         overflow: hidden;
+    }
+    
+    .metric-card-success::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        transition: left 0.5s;
+    }
+    
+    .metric-card-success:hover::before {
+        left: 100%;
     }
     
     .metric-card-success:hover {
@@ -108,12 +126,30 @@ st.markdown("""
     
     .metric-card-warning {
         background: linear-gradient(135deg, rgba(255, 217, 61, 0.1) 0%, rgba(255, 217, 61, 0.05) 100%);
+        backdrop-filter: blur(20px);
         border: 1px solid rgba(255, 217, 61, 0.2);
+        border-radius: 16px;
+        padding: 28px;
         box-shadow: 0 8px 32px rgba(255, 217, 61, 0.1);
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         cursor: pointer;
         position: relative;
         overflow: hidden;
+    }
+    
+    .metric-card-warning::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        transition: left 0.5s;
+    }
+    
+    .metric-card-warning:hover::before {
+        left: 100%;
     }
     
     .metric-card-warning:hover {
