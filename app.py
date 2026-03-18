@@ -83,34 +83,44 @@ st.markdown("""
     }
     
     .metric-card-premium:hover {
-        transform: translateY(-6px) scale(1.02);
-        background: linear-gradient(135deg, rgba(255, 107, 107, 0.15) 0%, rgba(255, 107, 107, 0.08) 100%);
-        border: 1px solid rgba(255, 107, 107, 0.3);
-        box-shadow: 0 16px 48px rgba(255, 107, 107, 0.2);
+        transform: translateY(-15px) scale(1.05);
+        background: linear-gradient(135deg, rgba(255, 107, 107, 0.2) 0%, rgba(255, 107, 107, 0.12) 100%);
+        border: 1px solid rgba(255, 107, 107, 0.4);
+        box-shadow: 0 24px 64px rgba(255, 107, 107, 0.35);
     }
     
     .metric-card-success {
         background: linear-gradient(135deg, rgba(78, 205, 196, 0.1) 0%, rgba(78, 205, 196, 0.05) 100%);
         border: 1px solid rgba(78, 205, 196, 0.2);
         box-shadow: 0 8px 32px rgba(78, 205, 196, 0.1);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
     }
     
     .metric-card-success:hover {
-        background: linear-gradient(135deg, rgba(78, 205, 196, 0.15) 0%, rgba(78, 205, 196, 0.08) 100%);
-        border: 1px solid rgba(78, 205, 196, 0.3);
-        box-shadow: 0 16px 48px rgba(78, 205, 196, 0.2);
+        transform: translateY(-15px) scale(1.05);
+        background: linear-gradient(135deg, rgba(78, 205, 196, 0.2) 0%, rgba(78, 205, 196, 0.12) 100%);
+        border: 1px solid rgba(78, 205, 196, 0.4);
+        box-shadow: 0 24px 64px rgba(78, 205, 196, 0.35);
     }
     
     .metric-card-warning {
         background: linear-gradient(135deg, rgba(255, 217, 61, 0.1) 0%, rgba(255, 217, 61, 0.05) 100%);
         border: 1px solid rgba(255, 217, 61, 0.2);
         box-shadow: 0 8px 32px rgba(255, 217, 61, 0.1);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
     }
     
     .metric-card-warning:hover {
-        background: linear-gradient(135deg, rgba(255, 217, 61, 0.15) 0%, rgba(255, 217, 61, 0.08) 100%);
-        border: 1px solid rgba(255, 217, 61, 0.3);
-        box-shadow: 0 16px 48px rgba(255, 217, 61, 0.2);
+        transform: translateY(-15px) scale(1.05);
+        background: linear-gradient(135deg, rgba(255, 217, 61, 0.2) 0%, rgba(255, 217, 61, 0.12) 100%);
+        border: 1px solid rgba(255, 217, 61, 0.4);
+        box-shadow: 0 24px 64px rgba(255, 217, 61, 0.35);
     }
     
     /* ===== TYPOGRAPHY ===== */
@@ -341,12 +351,16 @@ st.markdown("""
         border-radius: 12px;
         padding: 20px;
         box-shadow: 0 4px 15px rgba(255, 107, 107, 0.1);
-        transition: all 0.3s ease;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+        position: relative;
     }
     
     .metric-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 25px rgba(255, 107, 107, 0.2);
+        transform: translateY(-12px) scale(1.05);
+        box-shadow: 0 20px 50px rgba(255, 107, 107, 0.25);
+        background: linear-gradient(135deg, rgba(255, 107, 107, 0.15) 0%, rgba(255, 107, 107, 0.08) 100%);
+        border: 1px solid rgba(255, 107, 107, 0.3);
     }
     
     .insight-box {
