@@ -189,6 +189,12 @@ st.markdown("""
         display: flex;
         align-items: center;
         gap: 12px;
+        transition: transform 0.25s ease, filter 0.25s ease;
+    }
+
+    .section-title:hover {
+        transform: translateY(-4px) scale(1.03);
+        filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.35));
     }
     
     /* ===== CHART CONTAINERS ===== */
@@ -200,6 +206,10 @@ st.markdown("""
         padding: 24px;
         margin: 20px 0;
         transition: all 0.3s ease;
+    }
+
+    .chart-wrapper:hover {
+        transform: translateY(-4px) scale(1.01);
     }
     
     .chart-wrapper:hover {
@@ -315,6 +325,19 @@ st.markdown("""
             transform: translateY(0);
         }
     }
+
+    @keyframes floatIn {
+        from {
+            opacity: 0;
+            transform: translateY(14px) scale(0.99);
+            filter: blur(2px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            filter: blur(0);
+        }
+    }
     
     @keyframes fadeIn {
         from { opacity: 0; }
@@ -324,223 +347,111 @@ st.markdown("""
     .fade-in {
         animation: fadeIn 0.6s ease-in;
     }
-    
-    /* ===== NEW CREATIVE ANIMATIONS ===== */
-    
-    /* Floating Animation */
-    @keyframes float {
-        0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-12px); }
-    }
-    
-    .float-element {
-        animation: float 3s ease-in-out infinite;
-    }
-    
-    /* Glowing Underline */
-    @keyframes glowUnderline {
-        0%, 100% { box-shadow: 0 0 5px rgba(255, 107, 107, 0.5), 0 0 10px rgba(255, 107, 107, 0.3); }
-        50% { box-shadow: 0 0 10px rgba(255, 107, 107, 0.8), 0 0 20px rgba(255, 107, 107, 0.5); }
-    }
-    
-    .section-title::after {
-        content: '';
-        display: block;
-        width: 60px;
-        height: 3px;
-        background: linear-gradient(90deg, #FF6B6B 0%, #4ECDC4 50%, #FFD93D 100%);
-        border-radius: 2px;
-        margin-top: 12px;
-        animation: glowUnderline 2.5s ease-in-out infinite;
-    }
-    
-    /* Neon Glow Effect */
-    @keyframes neonGlow {
-        0%, 100% { 
-            text-shadow: 0 0 10px rgba(255, 107, 107, 0.5),
-                         0 0 20px rgba(255, 107, 107, 0.3);
-        }
-        50% { 
-            text-shadow: 0 0 20px rgba(255, 107, 107, 0.8),
-                         0 0 40px rgba(255, 107, 107, 0.5),
-                         0 0 60px rgba(255, 107, 107, 0.3);
+
+    /* ===== GLOBAL MOTION (APPLIES ACROSS ALL PAGES) ===== */
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: 1ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 1ms !important;
+            scroll-behavior: auto !important;
         }
     }
-    
-    /* Rainbow Gradient Text */
-    .rainbow-text {
-        background: linear-gradient(90deg, #FF6B6B, #FFD93D, #4ECDC4, #FF6B6B);
-        background-size: 300% 300%;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        animation: gradientShift 3s ease infinite;
+
+    .section-title {
+        animation: fadeIn 0.55s ease both;
     }
-    
-    @keyframes gradientShift {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
+
+    .chart-wrapper {
+        animation: floatIn 0.7s ease both;
     }
-    
-    /* Bounce Animation */
-    @keyframes bounce {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-20px); }
+
+    .metric-card-premium,
+    .metric-card-success,
+    .metric-card-warning,
+    .metric-card {
+        animation: floatIn 0.65s ease both;
     }
-    
-    .bounce-element {
-        animation: bounce 1.5s ease-in-out infinite;
+
+    .insight-box,
+    .alert-high-risk,
+    .alert-low-risk,
+    .chart-container,
+    .risk-high,
+    .risk-low {
+        animation: fadeIn 0.6s ease both;
     }
-    
-    /* Rotate Animation */
-    @keyframes rotateIcon {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
+
+    /* Smooth tab content entry */
+    .stTabs [data-baseweb="tab-panel"] {
+        animation: fadeIn 0.45s ease both;
     }
-    
-    .rotate-element {
-        animation: rotateIcon 3s linear infinite;
+
+    /* ===== DASHBOARD ANIMATIONS (NO COLOR THEME CHANGES) ===== */
+    .dashboard-reveal {
+        animation: slideIn 0.7s ease both;
     }
-    
-    /* Shimmer Wave */
-    @keyframes shimmer {
-        0% { background-position: -1000px 0; }
-        100% { background-position: 1000px 0; }
+
+    .dashboard-metric-reveal {
+        animation: slideIn 0.65s ease both;
     }
-    
-    .shimmer-effect {
-        background: linear-gradient(90deg, 
-            rgba(255, 255, 255, 0) 0%, 
-            rgba(255, 255, 255, 0.15) 50%, 
-            rgba(255, 255, 255, 0) 100%);
-        background-size: 1000px 100%;
-        animation: shimmer 2s infinite;
+
+    .dashboard-insight-reveal {
+        animation: fadeIn 0.6s ease both;
     }
-    
-    /* Counter Animation */
-    @keyframes countUp {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
-    
-    /* Status Badges */
-    .badge-excellent {
-        display: inline-block;
-        background: linear-gradient(135deg, #4ECDC4, #45B7AA);
-        color: white;
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-size: 0.8em;
-        font-weight: 700;
-        margin-left: 8px;
-        box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
-    }
-    
-    .badge-good {
-        display: inline-block;
-        background: linear-gradient(135deg, #FFD93D, #F7C441);
-        color: #1a1f3a;
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-size: 0.8em;
-        font-weight: 700;
-        margin-left: 8px;
-        box-shadow: 0 4px 15px rgba(255, 217, 61, 0.3);
-    }
-    
-    .badge-warning {
-        display: inline-block;
-        background: linear-gradient(135deg, #FF6B6B, #FF5252);
-        color: white;
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-size: 0.8em;
-        font-weight: 700;
-        margin-left: 8px;
-        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
-        animation: pulse 2s infinite;
-    }
-    
-    /* Progress Bar Animation */
-    @keyframes fillProgress {
-        from { width: 0%; }
-        to { width: var(--progress-value); }
-    }
-    
-    .progress-bar {
-        height: 6px;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 3px;
-        overflow: hidden;
-        margin-top: 8px;
-    }
-    
-    .progress-fill {
-        height: 100%;
-        background: linear-gradient(90deg, #FF6B6B, #4ECDC4, #FFD93D);
-        border-radius: 3px;
-        animation: fillProgress 1.5s ease-out forwards;
-    }
-    
-    /* Hover Tooltip */
-    .tooltip-container {
+
+    .dashboard-chart-wrapper {
         position: relative;
-        display: inline-block;
-        cursor: help;
-        border-bottom: 1px dotted rgba(255, 255, 255, 0.3);
-    }
-    
-    .tooltip-text {
-        visibility: hidden;
-        background-color: rgba(0, 0, 0, 0.8);
-        color: #FFD93D;
-        text-align: center;
-        border-radius: 8px;
-        padding: 8px 12px;
-        position: absolute;
-        z-index: 1;
-        bottom: 125%;
-        left: 50%;
-        margin-left: -60px;
-        opacity: 0;
-        transition: opacity 0.3s;
-        font-size: 0.85em;
-        white-space: nowrap;
-        border: 1px solid rgba(255, 217, 61, 0.3);
-    }
-    
-    .tooltip-container:hover .tooltip-text {
-        visibility: visible;
-        opacity: 1;
-    }
-    
-    /* Card Float Effect */
-    .card-float {
-        animation: float 4s ease-in-out infinite;
-    }
-    
-    /* Glow on Hover */
-    .glow-hover:hover {
-        box-shadow: 0 0 30px rgba(255, 107, 107, 0.6),
-                    0 0 60px rgba(255, 107, 107, 0.3) !important;
-        filter: brightness(1.1);
-    }
-    
-    /* Text Animation */
-    @keyframes typeWriter {
-        from { width: 0; }
-        to { width: 100%; }
-    }
-    
-    .typewriter {
         overflow: hidden;
-        border-right: 3px solid #4ECDC4;
-        white-space: nowrap;
-        animation: typeWriter 2s steps(40, end);
+    }
+
+    @keyframes dashboardShimmer {
+        0% { transform: translateX(-120%); }
+        100% { transform: translateX(120%); }
+    }
+
+    /* ===== PLOTLY GRAPH ENTRANCE ANIMATION ===== */
+    @keyframes plotSvgPop {
+        0% {
+            opacity: 0;
+            transform: scale(0.985) translateY(10px);
+            filter: blur(2px);
+        }
+        100% {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            filter: blur(0);
+        }
+    }
+
+    .js-plotly-plot .main-svg {
+        transform-origin: center;
+        animation: plotSvgPop 0.85s cubic-bezier(0.2, 0.9, 0.25, 1) both;
+    }
+
+    .dashboard-chart-wrapper::after {
+        content: '';
+        position: absolute;
+        top: -60%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(90deg,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0.12) 50%,
+            rgba(255, 255, 255, 0) 100%
+        );
+        transform: translateX(-120%);
+        animation: dashboardShimmer 2.8s ease-in-out infinite;
+        pointer-events: none;
+        opacity: 0.35;
+    }
+
+    .dashboard-chart-wrapper:hover::after {
+        opacity: 0.55;
     }
     
-    /* Insight BADGES ===== */
+    /* ===== INSIGHT BADGES ===== */
     .insight-badge {
         display: inline-block;
         background: linear-gradient(135deg, rgba(255, 217, 61, 0.2) 0%, rgba(255, 217, 61, 0.1) 100%);
@@ -621,6 +532,12 @@ st.markdown("""
         border-radius: 8px;
         margin: 10px 0;
         color: #E8E8E8;
+        transition: transform 0.25s ease, filter 0.25s ease;
+    }
+
+    .insight-box:hover {
+        transform: translateY(-6px) scale(1.02);
+        filter: drop-shadow(0 12px 26px rgba(0, 0, 0, 0.35));
     }
     
     .chart-container {
@@ -691,6 +608,13 @@ def load_all_models_metadata():
     for model_file in MODEL_DIR.glob("*_metadata.json"):
         with open(model_file) as f:
             metadata[model_file.stem.replace("_metadata", "")] = json.load(f)
+
+    # Backward/compat: logistic metadata is stored in `model_metadata.json`
+    # (not `logistic_metadata.json`) in this project.
+    main_metadata_path = MODEL_DIR / "model_metadata.json"
+    if main_metadata_path.exists() and "logistic" not in metadata:
+        with open(main_metadata_path, "r", encoding="utf-8") as f:
+            metadata["logistic"] = json.load(f)
     return metadata
 
 df = load_data()
@@ -736,16 +660,9 @@ with st.sidebar:
 
 # ======================== MAIN HEADER ========================
 st.markdown("""
-    <div style='text-align: center; margin: 40px 0 50px 0; padding: 30px; background: linear-gradient(135deg, rgba(255, 107, 107, 0.08) 0%, rgba(78, 205, 196, 0.08) 100%); backdrop-filter: blur(10px); border-radius: 20px; border: 2px solid rgba(255, 107, 107, 0.2); box-shadow: 0 0 30px rgba(255, 107, 107, 0.2); animation: fadeIn 0.8s ease;'>
-        <h1 class='title-premium' style='animation: neonGlow 2s ease-in-out infinite;'>✨ 🎓 Faculty Workload Intelligence Platform ✨</h1>
-        <p class='subtitle-premium' style='margin-top: 15px; font-size: 1.2em;'>🚀 AI-Powered Predictive Analytics for Faculty Workload Risk Assessment</p>
-        <div style='margin-top: 15px; font-size: 0.9em; color: #4ECDC4; letter-spacing: 1px;'>
-            <span class='tooltip-container'>
-                <strong>Status:</strong> 
-                <span class='tooltip-text'>Real-time monitoring and predictive analysis active</span>
-                🟢 LIVE
-            </span>
-        </div>
+    <div style='text-align: center; margin: 40px 0 50px 0; padding: 30px; background: linear-gradient(135deg, rgba(255, 107, 107, 0.08) 0%, rgba(78, 205, 196, 0.08) 100%); backdrop-filter: blur(10px); border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1);'>
+        <h1 class='title-premium'>🎓 Faculty Workload Intelligence Platform</h1>
+        <p class='subtitle-premium'>✨ AI-Powered Predictive Analytics for Faculty Workload Risk Assessment</p>
     </div>
 """, unsafe_allow_html=True)
 
@@ -756,63 +673,40 @@ if selected == "🏠 Dashboard":
     
     with col1:
         st.markdown("""
-            <div class='metric-card-premium glow-hover card-float'>
-                <div style='font-size: 2.8em; margin-bottom: 12px; animation: float 3s ease-in-out infinite;'>👥</div>
+            <div class='metric-card-premium dashboard-metric-reveal' style='animation-delay: 0.0s;'>
+                <div style='font-size: 2.8em; margin-bottom: 12px;'>👥</div>
                 <div style='font-size: 0.85em; color: #B0B0B0; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;'>Total Faculty</div>
-                <div style='font-size: 2.4em; font-weight: 800; color: #FF6B6B; margin-top: 10px; background: linear-gradient(90deg, #FF6B6B, #FFD93D, #4ECDC4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;'>""" + str(len(df)) + """</div>
-                <div style='margin-top: 12px;'>
-                    <div class='progress-bar'>
-                        <div class='progress-fill' style='--progress-value: 100%;'></div>
-                    </div>
-                </div>
+                <div style='font-size: 2.4em; font-weight: 800; color: #FF6B6B; margin-top: 10px;'>""" + str(len(df)) + """</div>
             </div>
         """, unsafe_allow_html=True)
     
     with col2:
         high_risk = int(df['workload_risk'].sum())
-        risk_badge = "badge-warning" if high_risk > 20 else "badge-good"
         st.markdown(f"""
-            <div class='metric-card-premium glow-hover card-float' style='background: linear-gradient(135deg, rgba(255, 107, 107, 0.15) 0%, rgba(255, 107, 107, 0.08) 100%); border: 1px solid rgba(255, 107, 107, 0.3); animation-delay: 0.2s;'>
-                <div style='font-size: 2.8em; margin-bottom: 12px; animation: float 3s ease-in-out infinite; animation-delay: 0.2s;'>⚠️</div>
-                <div style='font-size: 0.85em; color: #FFB3B3; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;'>High Risk <span class='{risk_badge}' style='margin: 0;'>🔴</span></div>
-                <div style='font-size: 2.4em; font-weight: 800; color: #FF6B6B; margin-top: 10px; background: linear-gradient(90deg, #FF6B6B, #FFD93D); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;'>{high_risk}</div>
-                <div style='margin-top: 12px;'>
-                    <div class='progress-bar'>
-                        <div class='progress-fill' style='--progress-value: {(high_risk/len(df)*100):.1f}%;'></div>
-                    </div>
-                </div>
+            <div class='metric-card-premium dashboard-metric-reveal' style='background: linear-gradient(135deg, rgba(255, 107, 107, 0.15) 0%, rgba(255, 107, 107, 0.08) 100%); border: 1px solid rgba(255, 107, 107, 0.3); animation-delay: 0.12s;'>
+                <div style='font-size: 2.8em; margin-bottom: 12px;'>⚠️</div>
+                <div style='font-size: 0.85em; color: #FFB3B3; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;'>High Risk <span style='font-size: 0.7em;'>(🔴)</span></div>
+                <div style='font-size: 2.4em; font-weight: 800; color: #FF6B6B; margin-top: 10px;'>{high_risk}</div>
             </div>
         """, unsafe_allow_html=True)
     
     with col3:
         low_risk = int((df['workload_risk'] == 0).sum())
-        low_badge = "badge-excellent" if low_risk > 80 else "badge-good"
         st.markdown(f"""
-            <div class='metric-card-success glow-hover card-float' style='animation-delay: 0.4s;'>
-                <div style='font-size: 2.8em; margin-bottom: 12px; animation: float 3s ease-in-out infinite; animation-delay: 0.4s;'>✅</div>
-                <div style='font-size: 0.85em; color: #A8F0ED; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;'>Low Risk <span class='{low_badge}' style='margin: 0;'>✓</span></div>
-                <div style='font-size: 2.4em; font-weight: 800; color: #4ECDC4; margin-top: 10px; background: linear-gradient(90deg, #4ECDC4, #45B7AA); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;'>{low_risk}</div>
-                <div style='margin-top: 12px;'>
-                    <div class='progress-bar'>
-                        <div class='progress-fill' style='--progress-value: {(low_risk/len(df)*100):.1f}%;'></div>
-                    </div>
-                </div>
+            <div class='metric-card-success dashboard-metric-reveal' style='animation-delay: 0.24s;'>
+                <div style='font-size: 2.8em; margin-bottom: 12px;'>✅</div>
+                <div style='font-size: 0.85em; color: #A8F0ED; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;'>Low Risk <span style='font-size: 0.7em;'>(✓)</span></div>
+                <div style='font-size: 2.4em; font-weight: 800; color: #4ECDC4; margin-top: 10px;'>{low_risk}</div>
             </div>
         """, unsafe_allow_html=True)
     
     with col4:
         risk_percentage = round((high_risk / len(df)) * 100, 1)
-        status_badge = "badge-excellent" if risk_percentage < 10 else ("badge-good" if risk_percentage < 30 else "badge-warning")
         st.markdown(f"""
-            <div class='metric-card-warning glow-hover card-float' style='animation-delay: 0.6s;'>
-                <div style='font-size: 2.8em; margin-bottom: 12px; animation: float 3s ease-in-out infinite; animation-delay: 0.6s;'>📊</div>
-                <div style='font-size: 0.85em; color: #FFE899; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;'>Risk Rate <span class='{status_badge}' style='margin: 0;'>📈</span></div>
-                <div style='font-size: 2.4em; font-weight: 800; color: #FFD93D; margin-top: 10px; background: linear-gradient(90deg, #FFD93D, #F7C441); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;'>{risk_percentage}%</div>
-                <div style='margin-top: 12px;'>
-                    <div class='progress-bar'>
-                        <div class='progress-fill' style='--progress-value: {risk_percentage}%;'></div>
-                    </div>
-                </div>
+            <div class='metric-card-warning dashboard-metric-reveal' style='animation-delay: 0.36s;'>
+                <div style='font-size: 2.8em; margin-bottom: 12px;'>📊</div>
+                <div style='font-size: 0.85em; color: #FFE899; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;'>Overall Risk Rate</div>
+                <div style='font-size: 2.4em; font-weight: 800; color: #FFD93D; margin-top: 10px;'>{risk_percentage}%</div>
             </div>
         """, unsafe_allow_html=True)
     
@@ -822,7 +716,7 @@ if selected == "🏠 Dashboard":
     col1, col2 = st.columns(2)
     
     with col1:
-        st.markdown("<div class='chart-wrapper' style='animation: fadeIn 0.6s ease;'>", unsafe_allow_html=True)
+        st.markdown("<div class='chart-wrapper dashboard-chart-wrapper dashboard-reveal' style='animation-delay: 0.08s;'>", unsafe_allow_html=True)
         st.markdown("<div class='section-title'>📊 Risk Distribution</div>", unsafe_allow_html=True)
         fig_pie = px.pie(
             values=[low_risk, high_risk],
@@ -840,7 +734,7 @@ if selected == "🏠 Dashboard":
         st.markdown("</div>", unsafe_allow_html=True)
     
     with col2:
-        st.markdown("<div class='chart-wrapper' style='animation: fadeIn 0.7s ease;'>", unsafe_allow_html=True)
+        st.markdown("<div class='chart-wrapper dashboard-chart-wrapper dashboard-reveal' style='animation-delay: 0.16s;'>", unsafe_allow_html=True)
         st.markdown("<div class='section-title'>📈 Risk by Experience Level</div>", unsafe_allow_html=True)
         experience_risk = df.groupby(pd.cut(df['years_of_experience'], bins=5))['workload_risk'].mean()
         fig_exp = px.bar(
@@ -869,7 +763,7 @@ if selected == "🏠 Dashboard":
     with col1:
         avg_courses = df['courses_assigned'].mean()
         st.markdown(f"""
-            <div class='insight-box'>
+            <div class='insight-box dashboard-insight-reveal' style='animation-delay: 0.22s;'>
                 <strong>📚 Average Course Load</strong><br>
                 Faculty teach <strong>{avg_courses:.1f} courses</strong> on average<br>
                 <span style='color: #A0A0A0; font-size: 0.85em;'>Range: {int(df['courses_assigned'].min())}-{int(df['courses_assigned'].max())} courses</span>
@@ -878,7 +772,7 @@ if selected == "🏠 Dashboard":
         
         avg_hours = df['weekly_teaching_hours'].mean()
         st.markdown(f"""
-            <div class='insight-box'>
+            <div class='insight-box dashboard-insight-reveal' style='animation-delay: 0.30s;'>
                 <strong>⏰ Average Teaching Hours</strong><br>
                 Faculty spend <strong>{avg_hours:.1f} hours/week</strong> teaching<br>
                 <span style='color: #A0A0A0; font-size: 0.85em;'>Range: {int(df['weekly_teaching_hours'].min())}-{int(df['weekly_teaching_hours'].max())} hours</span>
@@ -888,7 +782,7 @@ if selected == "🏠 Dashboard":
     with col2:
         high_risk_courses = df[df['workload_risk'] == 1]['courses_assigned'].mean()
         st.markdown(f"""
-            <div class='insight-box'>
+            <div class='insight-box dashboard-insight-reveal' style='animation-delay: 0.38s;'>
                 <strong>⚠️ High Risk Course Load</strong><br>
                 High-risk faculty teach <strong>{high_risk_courses:.1f} courses</strong> (vs {df[df['workload_risk'] == 0]['courses_assigned'].mean():.1f} for low-risk)<br>
                 <span style='color: #A0A0A0; font-size: 0.85em;'>Difference: +{high_risk_courses - df[df['workload_risk'] == 0]['courses_assigned'].mean():.1f} courses</span>
@@ -897,7 +791,7 @@ if selected == "🏠 Dashboard":
         
         high_risk_hours = df[df['workload_risk'] == 1]['weekly_teaching_hours'].mean()
         st.markdown(f"""
-            <div class='insight-box'>
+            <div class='insight-box dashboard-insight-reveal' style='animation-delay: 0.46s;'>
                 <strong>⚠️ High Risk Teaching Hours</strong><br>
                 High-risk faculty work <strong>{high_risk_hours:.1f} hours/week</strong> (vs {df[df['workload_risk'] == 0]['weekly_teaching_hours'].mean():.1f} for low-risk)<br>
                 <span style='color: #A0A0A0; font-size: 0.85em;'>Difference: +{high_risk_hours - df[df['workload_risk'] == 0]['weekly_teaching_hours'].mean():.1f} hours</span>
@@ -909,7 +803,7 @@ if selected == "🏠 Dashboard":
     tab1, tab2, tab3 = st.tabs(["📊 Detailed Breakdown", "🎯 Risk Factors", "💼 Experience Impact"])
     
     with tab1:
-        st.markdown("<div class='chart-wrapper' style='animation: fadeIn 0.6s ease;'>", unsafe_allow_html=True)
+        st.markdown("<div class='chart-wrapper dashboard-chart-wrapper dashboard-reveal' style='animation-delay: 0.18s;'>", unsafe_allow_html=True)
         col1, col2 = st.columns(2)
         
         with col1:
@@ -953,7 +847,7 @@ if selected == "🏠 Dashboard":
         st.markdown("</div>", unsafe_allow_html=True)
     
     with tab2:
-        st.markdown("<div class='chart-wrapper' style='animation: fadeIn 0.7s ease;'>", unsafe_allow_html=True)
+        st.markdown("<div class='chart-wrapper dashboard-chart-wrapper dashboard-reveal' style='animation-delay: 0.26s;'>", unsafe_allow_html=True)
         
         # Identify key risk factors
         col1, col2 = st.columns(2)
@@ -1007,7 +901,7 @@ if selected == "🏠 Dashboard":
         st.markdown("</div>", unsafe_allow_html=True)
     
     with tab3:
-        st.markdown("<div class='chart-wrapper' style='animation: fadeIn 0.8s ease;'>", unsafe_allow_html=True)
+        st.markdown("<div class='chart-wrapper dashboard-chart-wrapper dashboard-reveal' style='animation-delay: 0.34s;'>", unsafe_allow_html=True)
         
         # Experience vs workload
         col1, col2 = st.columns(2)
@@ -1037,7 +931,7 @@ if selected == "🏠 Dashboard":
         with col2:
             # Preparation hours matter
             st.markdown("""
-                <div class='insight-box'>
+                <div class='insight-box dashboard-insight-reveal' style='animation-delay: 0.22s;'>
                     <strong>📖 Preparation Time Impact</strong>
                 </div>
             """, unsafe_allow_html=True)
@@ -1048,7 +942,7 @@ if selected == "🏠 Dashboard":
             
             with col_a:
                 st.markdown(f"""
-                    <div style='background: rgba(78, 205, 196, 0.1); border-left: 3px solid #4ECDC4; padding: 10px; border-radius: 5px;'>
+                    <div class='dashboard-insight-reveal' style='background: rgba(78, 205, 196, 0.1); border-left: 3px solid #4ECDC4; padding: 10px; border-radius: 5px; animation-delay: 0.30s;'>
                         <div style='font-size: 0.9em; color: #A0A0A0;'><strong>Low Risk Faculty</strong></div>
                         <div style='font-size: 0.85em; color: #E8E8E8; margin-top: 5px;'>
                             Prep Hours: {prep_stats.loc[0, 'preparation_hours_per_week']:.1f}/week<br>
@@ -1060,7 +954,7 @@ if selected == "🏠 Dashboard":
             
             with col_b:
                 st.markdown(f"""
-                    <div style='background: rgba(255, 107, 107, 0.1); border-left: 3px solid #FF6B6B; padding: 10px; border-radius: 5px;'>
+                    <div class='dashboard-insight-reveal' style='background: rgba(255, 107, 107, 0.1); border-left: 3px solid #FF6B6B; padding: 10px; border-radius: 5px; animation-delay: 0.38s;'>
                         <div style='font-size: 0.9em; color: #A0A0A0;'><strong>High Risk Faculty</strong></div>
                         <div style='font-size: 0.85em; color: #E8E8E8; margin-top: 5px;'>
                             Prep Hours: {prep_stats.loc[1, 'preparation_hours_per_week']:.1f}/week<br>
@@ -1076,7 +970,7 @@ if selected == "🏠 Dashboard":
 elif selected == "📊 Analytics":
     st.markdown("<div class='section-title'>🔬 Exploratory Data Analysis</div>", unsafe_allow_html=True)
     
-    tab1, tab2, tab3, tab4 = st.tabs(["📊 Features", "🔗 Correlations", "📈 Trends", "🎯 Risk Analysis"])
+    tab1, tab2, tab3 = st.tabs(["📊 Features", "📈 Trends", "🎯 Risk Analysis"])
     
     with tab1:
         st.markdown("<div class='chart-wrapper' style='animation: fadeIn 0.6s ease;'>", unsafe_allow_html=True)
@@ -1128,25 +1022,6 @@ elif selected == "📊 Analytics":
         st.markdown("</div>", unsafe_allow_html=True)
     
     with tab2:
-        st.markdown("<div class='chart-wrapper' style='animation: fadeIn 0.6s ease;'>", unsafe_allow_html=True)
-        corr_matrix = df.corr(numeric_only=True)
-        fig_corr = px.imshow(
-            corr_matrix,
-            text_auto=True,
-            aspect="auto",
-            color_continuous_scale="RdBu",
-            zmin=-1, zmax=1
-        )
-        fig_corr.update_layout(
-            plot_bgcolor='rgba(0,0,0,0)',
-            paper_bgcolor='rgba(0,0,0,0)',
-            font=dict(color='#E8E8E8'),
-            height=500
-        )
-        st.plotly_chart(fig_corr, use_container_width=True, config={'displayModeBar': False})
-        st.markdown("</div>", unsafe_allow_html=True)
-    
-    with tab3:
         st.markdown("<div class='chart-wrapper' style='animation: fadeIn 0.7s ease;'>", unsafe_allow_html=True)
         numeric_features = df.select_dtypes(include=[np.number]).columns
         selected_features = st.multiselect("Select Features to Compare", numeric_features, default=['courses_assigned', 'weekly_teaching_hours', 'total_students_handled'])
@@ -1172,7 +1047,7 @@ elif selected == "📊 Analytics":
             st.plotly_chart(fig_trends, use_container_width=True, config={'displayModeBar': False})
         st.markdown("</div>", unsafe_allow_html=True)
     
-    with tab4:
+    with tab3:
         st.markdown("<div class='chart-wrapper' style='animation: fadeIn 0.8s ease;'>", unsafe_allow_html=True)
         col1, col2 = st.columns(2)
         
@@ -1744,11 +1619,15 @@ elif selected == "📈 Model Comparison":
     st.markdown("<div class='section-title'>🏆 Machine Learning Model Performance Comparison</div>", unsafe_allow_html=True)
     
     if models_metadata:
+        allowed_model_keys = ['logistic', 'random_forest', 'decision_tree', 'xgboost']
         st.markdown("<div class='chart-wrapper' style='animation: fadeIn 0.6s ease;'>", unsafe_allow_html=True)
         
         # Create comparison data
         comparison_data = []
         for model_name, metadata in models_metadata.items():
+            # Exclude models not used by this app's prediction engine
+            if model_name not in allowed_model_keys:
+                continue
             if 'test_metrics' in metadata:
                 comparison_data.append({
                     'Model': model_name.upper(),
@@ -1916,7 +1795,7 @@ elif selected == "ℹ️ About":
                 <h3>🤖 AI Models Used</h3>
                 <p>
                     Our system employs multiple machine learning models including Logistic Regression, 
-                    Decision Trees, Random Forests, SVM, and XGBoost to ensure accurate and robust predictions.
+                Decision Trees, Random Forests, and XGBoost to ensure accurate and robust predictions.
                 </p>
             </div>
         """, unsafe_allow_html=True)
@@ -1969,7 +1848,8 @@ elif selected == "ℹ️ About":
         """, unsafe_allow_html=True)
     
     with col4:
-        models_count = len(models_metadata)
+        allowed_model_keys = ['logistic', 'random_forest', 'decision_tree', 'xgboost']
+        models_count = sum(1 for k in models_metadata.keys() if k in allowed_model_keys)
         st.markdown(f"""
             <div class='metric-card'>
                 <div style='font-size: 1.1em; color: #A0A0A0;'>ML Models</div>
