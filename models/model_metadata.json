@@ -2,7 +2,7 @@
   "model_type": "LogisticRegression",
   "model_path": "c:\\Users\\Roominesh\\OneDrive\\Desktop\\Hackathon_3_Project\\models\\logistic_model.joblib",
   "scaler_path": "c:\\Users\\Roominesh\\OneDrive\\Desktop\\Hackathon_3_Project\\models\\logistic_scaler.joblib",
-  "training_timestamp": "2026-03-17T22:51:48.097330",
+  "training_timestamp": "2026-03-19T14:21:04.213619",
   "training_records": 96,
   "feature_names": [
     "courses_assigned",
